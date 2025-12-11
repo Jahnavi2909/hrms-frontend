@@ -1,11 +1,9 @@
 
-/* EMPLOYEE PROFILE CONTAINER */
 .employee-profile {
   width: 100%;
   padding: 0 15px;
 }
 
-/* PROFILE HEADER SECTION */
 .profile-header {
   position: relative;
   width: 100%;
@@ -30,7 +28,7 @@
   margin-top: -60px;
 }
 
-/* AVATAR SECTION */
+
 .profile-avatar {
   width: 110px;
   height: 110px;
@@ -49,7 +47,6 @@
   color: #555;
 }
 
-/* PROFILE META DETAILS */
 .profile-meta h2 {
   margin: 0;
   font-weight: 700;
@@ -69,7 +66,7 @@
   }
 }
 
-/* TABS STYLING */
+
 .profile-tabs .nav-link {
   font-weight: 600;
 }
@@ -78,7 +75,6 @@
   border-bottom: 3px solid #0d6efd;
 }
 
-/* CARD STYLING */
 .card {
   border-radius: 12px !important;
 }
@@ -87,12 +83,11 @@
   font-weight: bold !important;
 }
 
-/*  PERSONAL INFORMATION TEXTS*/
 .card-body p {
   font-size: 15px;
 }
 
-/* QUICK STATS BOX */
+
 .stat-item {
   display: flex;
   align-items: center;
@@ -100,7 +95,7 @@
   padding: 10px 0;
 }
 
-/* TABLE RESPONSIVE */
+
 .table-responsive {
   overflow-x: auto;
 }
@@ -125,9 +120,27 @@ table td {
   }
 }
 
-/* MOBILE CARD STACKING */
 @media (max-width: 768px) {
   .row > div {
     margin-bottom: 20px !important;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .attendance-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .attendance-card .badge {
+    font-size: 0.75rem;
+  }
+
+  .attendance-card div {
+    font-size: 14px;
   }
 }

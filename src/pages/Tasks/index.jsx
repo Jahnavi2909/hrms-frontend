@@ -69,8 +69,8 @@ const TaskCreateForm = ({ onAdd }) => {
     <Card className="mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Card.Header as="h5">Create New Task</Card.Header>
-        <Button type="submit" variant="primary" style={{marginRight :"20px", marginTop:"10px"}} onClick={() => setIsOpen(!isOpen)}>
-         {isOpen ? "Close Form" : "Create Task"}
+        <Button type="submit" variant="primary" style={{ marginRight: "20px", marginTop: "10px" }} onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? "Close Form" : "Create Task"}
         </Button>
       </div>
       <Card.Body>
@@ -285,6 +285,62 @@ const Tasks = () => {
               </tbody>
             </Table>
           </div>
+
+          <div className="task-mobile-list">
+            {visibleTasks.map((t) => (
+              <div className="task-card" key={t.id}>
+                {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
+                  <div className="field">
+                    <div className="label">Employee</div>
+                    <div className="value">{t.assignedToEmployeeName} ({t.employeeCode})</div>
+                  </div>
+                )}
+
+                <div className="field">
+                  <div className="label">Title</div>
+                  <div className="value">{t.title}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Status</div>
+                  <span className={`badge bg-${t.status === "COMPLETED" ? "success" :
+                      t.status === "IN_PROGRESS" ? "primary" : "warning"
+                    }`}>
+                    {t.status}
+                  </span>
+                </div>
+
+                <div className="field">
+                  <div className="label">Priority</div>
+                  <div className="value">{t.priority}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Start</div>
+                  <div className="value">{t.startDate}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Due</div>
+                  <div className="value">{t.dueDate}</div>
+                </div>
+
+                <div className="field">
+                  {(role === "ROLE_EMPLOYEE" && t.assignedToEmployeeId === user.employeeId && t.status !== "COMPLETED") ||
+                    (role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && t.status !== "COMPLETED" ? (
+                    <Button
+                      size="sm"
+                      variant="success"
+                      onClick={() => handleStatusChange(t.id, "COMPLETED")}
+                    >
+                      Mark Complete
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+
         </Card.Body>
       </Card>
     </div>

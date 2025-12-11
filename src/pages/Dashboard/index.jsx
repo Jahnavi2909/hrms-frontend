@@ -32,9 +32,6 @@ const Dashboard = () => {
   const [employees, setEmployees] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
-
- 
-  // Load Dashboard
  
   useEffect(() => {
     if (!user) return;
@@ -43,7 +40,7 @@ const Dashboard = () => {
   }, [user]);
 
 
-  // Admin/HR Dashboard
+  // Admin or HR Dashboard
   
   const loadAdminDashboard = async () => {
     try {
@@ -70,7 +67,7 @@ const Dashboard = () => {
     setLoading(false);
   };
 
-  // Employee / Manager / Admin own dashboard
+  // Employee or Manager or Admin own dashboard
   
   const loadEmployeeDashboard = async () => {
     try {
@@ -121,7 +118,7 @@ const Dashboard = () => {
   };
 
  
-  // Handle Edit / Delete Employee
+  // Handle Edit or Delete Employee
  
   const handleEditEmployee = (employee) => {
     setEditingEmployee(employee);
@@ -141,11 +138,10 @@ const Dashboard = () => {
   };
 
   
-  // Admin/HR View
+  // Admin or HR View
   
   const renderAdminView = () => (
     <>
-      {/* CHECK-IN / CHECK-OUT FOR HR / ADMIN / MANAGER */}
       {canCheckAttendance && (
         <Card className="mb-4">
           <Card.Body>

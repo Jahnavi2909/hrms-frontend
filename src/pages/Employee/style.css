@@ -1,109 +1,57 @@
-/* PAGE TITLE & ADD BUTTON */
-@media (max-width: 768px) {
-  h2 {
-    font-size: 20px !important;
-  }
 
-  .d-flex.justify-content-between.mb-4 {
-    flex-direction: column;
-    gap: 12px;
-  }
+/* DESKTOP TABLE ONLY             */
 
-  .d-flex.justify-content-between.mb-4 button {
-    width: 100% !important;
-  }
-}
-
-/* SEARCH BAR */
-@media (max-width: 768px) {
-  .mb-3.d-flex.justify-content-between .form-control {
-    width: 100% !important;
-  }
-}
-
-/* TABLE RESPONSIVE */
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-@media (max-width: 768px) {
-  table th,
-  table td {
-    font-size: 14px !important;
-    padding: 8px !important;
-  }
-
-  table td small {
-    font-size: 12px !important;
-  }
-}
-
-
-@media (max-width: 480px) {
-  table th:nth-child(5),
-  table td:nth-child(5) {
+@media (min-width: 769px) {
+  .mobile-list {
     display: none !important;
   }
 }
 
-/* ACTION BUTTONS (Edit or Delete) */
-@media (max-width: 576px) {
-  td .d-flex {
-    flex-direction: column;
-    gap: 4px;
-  }
 
-  td .btn {
-    width: 100% !important;
-    text-align: left;
-    padding-left: 0 !important;
-  }
-}
-
-/*  WHEN NO DATA*/
-td.text-center {
-  font-size: 15px !important;
-}
-
-/*  COLLAPSED FORM CONTAINER*/
-.collapse > div {
-  margin-bottom: 20px;
-}
-
-
-/*  EMPLOYEE FORM CARD */
-.employee-form-card {
-  max-width: 1500px;
-  width: 100%;
-}
+/* MOBILE CARD LAYOUT             */
 
 @media (max-width: 768px) {
-  .employee-form-card {
-    padding: 0 10px;
+
+  .desktop-table {
+    display: none !important;
   }
 
-  .employee-form-card .row .col-md-6 {
-    margin-bottom: 12px !important;
+  .mobile-list {
+    display: block;
   }
 
-  .employee-form-card label {
-    font-size: 14px !important;
+  .mobile-card {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   }
 
-  .employee-form-card input {
-    font-size: 14px !important;
-  }
-}
-
-/* FORM BUTTONS */
-@media (max-width: 576px) {
-  .employee-form-card button {
-    width: 100% !important;
+  .mobile-card .field {
     margin-bottom: 10px;
   }
 
-  .employee-form-card .btn-secondary {
-    margin-left: 0 !important;
+  .mobile-card .label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+
+  .mobile-card .value {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+
+  .mobile-card .actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .mobile-card .actions button {
+    font-size: 18px;
   }
 }

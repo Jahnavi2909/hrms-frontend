@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
     setLoading(false);
   }, []);
+  
 
   //login
   const login = async (email, password) => {
@@ -38,12 +39,14 @@ export const AuthProvider = ({ children }) => {
 
       const response = await authApi.login(email, password);
 
+      console.log("Login response:", response);
+
       if (response.data && response.data.data) {
         const { token, ...userData } = response.data.data;
 
         let finalUserData = { ...userData };
         if (!finalUserData.role) {
-          finalUserData.role = "EMPLOYEE";
+          finalUserData.role = "ROLE_EMPLOYEE";
         }
 
         Cookies.set("token", token, { expires: 7 });

@@ -275,6 +275,64 @@ const EndOfTheDayReport = () => {
               </tbody>
             </Table>
           </div>
+
+          <div className="eod-mobile-list">
+            {filteredEODs.map((e) => (
+              <div className="eod-card" key={e.id}>
+                {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
+                  <div className="field">
+                    <div className="label">Employee</div>
+                    <div className="value">{e.employeeName} ({e.employeeCode})</div>
+                  </div>
+                )}
+
+                <div className="field">
+                  <div className="label">Date</div>
+                  <div className="value">{e.date}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Work Summary</div>
+                  <div className="value">{e.workSummary}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Blockers</div>
+                  <div className="value">{e.blockers || "--"}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Status</div>
+                  <span className={`badge bg-${e.status === "APPROVED" ? "success" :
+                      e.status === "REJECTED" ? "danger" : "primary"
+                    }`}>
+                    {e.status}
+                  </span>
+                </div>
+
+                {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && e.status === "SUBMITTED" && (
+                  <div className="field">
+                    <Button
+                      variant="success"
+                      size="sm"
+                      className="me-2 mb-2"
+                      onClick={() => handleStatusChange(e.id, "APPROVED")}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleStatusChange(e.id, "REJECTED")}
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
         </Card.Body>
       </Card>
     </div>

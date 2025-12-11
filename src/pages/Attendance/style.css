@@ -1,193 +1,57 @@
 
+/* DESKTOP - Show Table Only     */
 
-.table th {
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6c757d;
-  border-top: none;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.table td {
-  vertical-align: middle;
-  padding: 1rem 0.75rem;
+@media (min-width: 769px) {
+  .attendance-mobile-list {
+    display: none !important;
+  }
 }
 
 
-.badge {
-  font-weight: 500;
-  padding: 0.4em 0.8em;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-
-.card {
-  border: none;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  margin-bottom: 1.5rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 1rem 1.25rem;
-  font-weight: 600;
-}
-
-
-.avatar-sm {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #e9ecef;
-  border-radius: 50%;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #495057;
-}
-
-.btn-action {
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 4px;
-}
-
-
-.summary-card {
-  border-left: 4px solid #0d6efd;
-  transition: all 0.3s ease;
-}
-
-.summary-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-}
+/* MOBILE -  Cards    */
 
 @media (max-width: 768px) {
-  .table-responsive {
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    overflow: hidden;
+
+  .attendance-table {
+    display: none !important;
   }
-  
-  .table {
-    margin-bottom: 0;
+
+  .attendance-mobile-list .mobile-card {
+    display: block;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   }
-  
-  .btn-group-actions {
-    flex-wrap: wrap;
-    gap: 0.25rem;
+
+  .mobile-card .field {
+    margin-bottom: 10px;
   }
-  
-  .btn-group-actions .btn {
-    flex: 1 0 auto;
-    min-width: 80px;
-    margin: 0.125rem;
+
+  .mobile-card .label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+
+  .mobile-card .value {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .mobile-card .badge {
+    font-size: 12px;
+    padding: 5px 8px;
   }
 }
 
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-tr {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.table-responsive::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-
-.table-responsive::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-
-/*  HEADER + DATE PICKER RESPONSIVE */
-@media (max-width: 768px) {
-    .d-flex.justify-content-between.align-items-center {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 10px;
-    }
-
-    .d-flex.align-items-center .form-control[type="date"] {
-        width: 100% !important;
-    }
-}
-
-/* TABLE RESPONSIVE FIXES */
-
-@media (max-width: 768px) {
-    table th, table td {
-        padding: 8px 6px !important;
-        font-size: 13px !important;
-        white-space: nowrap;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* SMALL MOBILE (max 480px) */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 20px !important;
-    }
-
-    table th, table td {
-        padding: 6px 4px !important;
-        font-size: 12px !important;
-    }
-
-    td strong {
-        font-size: 12px !important;
-        display: block;
-    }
-    td small {
-        font-size: 11px !important;
-    }
-
-    .badge {
-        font-size: 10px !important;
-        padding: 4px 6px !important;
-    }
-}
-
-
-  /* VERY SMALL DEVICES (max 360px) */
-
-@media (max-width: 360px) {
-    table th:nth-child(3),
-    table td:nth-child(3),
-    table th:nth-child(4),
-    table td:nth-child(4) {
-        display: none;
-    }
+@media (max-width: 380px) {
+  .mobile-card .value {
+    font-size: 14px;
+  }
+  .mobile-card .label {
+    font-size: 11px;
+  }
 }

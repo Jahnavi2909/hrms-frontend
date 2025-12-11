@@ -93,8 +93,8 @@ const Employee = () => {
                         </div>
                     </div>
 
-                    <div className="table-responsive">
-                        <Table hover className="align-middle">
+                    <div className="table-responsive ">
+                        <Table hover className="align-middle table desktop-table">
                             <thead>
                                 <tr>
                                     <th>Employee</th>
@@ -139,6 +139,70 @@ const Employee = () => {
                                 )}
                             </tbody>
                         </Table>
+
+                        {/* MOBILE CARD VIEW */}
+                        <div className="mobile-list d-md-none">
+                            {filteredEmployees.length ? (
+                                filteredEmployees.map(emp => (
+                                    <div className="mobile-card" key={emp.id}>
+
+                                        <div className="field">
+                                            <div className="label">Employee</div>
+                                            <div className="value">{emp.firstName} {emp.lastName}</div>
+                                            <div className="value text-muted" style={{ fontSize: "12px" }}>{emp.email}</div>
+                                        </div>
+
+                                        <div className="field">
+                                            <div className="label">Position</div>
+                                            <div className="value">{emp.designation}</div>
+                                        </div>
+
+                                        <div className="field">
+                                            <div className="label">Department</div>
+                                            <div className="value">{emp.departmentName}</div>
+                                        </div>
+
+                                        <div className="field">
+                                            <div className="label">Status</div>
+                                            <div className="value">{emp.status || "ACTIVE"}</div>
+                                        </div>
+
+                                        <div className="field">
+                                            <div className="label">Join Date</div>
+                                            <div className="value">
+                                                {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : "N/A"}
+                                            </div>
+                                        </div>
+
+                                        {/* ACTION BUTTONS */}
+                                        <div className="actions">
+                                            <Button
+                                                variant="link"
+                                                size="sm"
+                                                className="text-primary p-0"
+                                                onClick={() => handleEdit(emp)}
+                                            >
+                                                <FaEdit />
+                                            </Button>
+
+                                            <Button
+                                                variant="link"
+                                                size="sm"
+                                                className="text-danger p-0"
+                                                onClick={() => handleDelete(emp.id)}
+                                            >
+                                                <FaTrash />
+                                            </Button>
+                                        </div>
+
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-center py-3">No employees found.</p>
+                            )}
+                        </div>
+
+
                     </div>
                 </Card.Body>
             </Card>

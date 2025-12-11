@@ -256,6 +256,58 @@ const Leaves = () => {
               </tbody>
             </Table>
           </div>
+
+          <div className="leave-mobile-list">
+            {filteredLeaves.map((l) => (
+              <div className="leave-card" key={l.id}>
+
+                {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") && (
+                  <div className="field">
+                    <div className="label">Employee</div>
+                    <div className="value">{l.employeeName} ({l.employeeCode})</div>
+                  </div>
+                )}
+
+                <div className="field">
+                  <div className="label">Leave Type</div>
+                  <div className="value">{l.leaveType}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Status</div>
+                  <span className={`badge bg-${l.status === "APPROVED" ? "success" :
+                      l.status === "REJECTED" ? "danger" : "warning"
+                    }`}>
+                    {l.status}
+                  </span>
+                </div>
+
+                <div className="field">
+                  <div className="label">From</div>
+                  <div className="value">{l.startDate}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">To</div>
+                  <div className="value">{l.endDate}</div>
+                </div>
+
+                <div className="field">
+                  <div className="label">Days</div>
+                  <div className="value">{l.days}</div>
+                </div>
+
+                {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") &&
+                  l.status === "PENDING" && (
+                    <div className="d-flex gap-2 mt-2">
+                      <Button size="sm" onClick={() => handleAction(l.id, "APPROVE")}>Approve</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleAction(l.id, "REJECT")}>Reject</Button>
+                    </div>
+                  )}
+              </div>
+            ))}
+          </div>
+
         </Card.Body>
       </Card>
     </div>

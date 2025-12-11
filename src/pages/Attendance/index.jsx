@@ -67,6 +67,7 @@ const Attendance = () => {
         return () => window.removeEventListener("attendance-updated", handler);
     }, []);
 
+
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -95,55 +96,92 @@ const Attendance = () => {
                     <Card.Header as="h5">Attendance on {date}</Card.Header>
                     <Card.Body>
                         {attendanceData.length > 0 ? (
-                            <div className="table-responsive">
-                                <table className="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Status</th>
-                                            <th>Check In</th>
-                                            <th>Check Out</th>
-                                            <th>Hours Worked</th>
-                                        </tr>
-                                    </thead>
+                            <>
+                                <div className="table-responsive attendance-table">
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Check In</th>
+                                                <th>Check Out</th>
+                                                <th>Hours Worked</th>
+                                            </tr>
+                                        </thead>
 
-                                    <tbody>
-                                        {attendanceData.map((record, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    {new Date(
-                                                        record.date
-                                                    ).toLocaleDateString()}
-                                                </td>
-                                                <td>
-                                                    <span
-                                                        className={`badge bg-${record.attendanceStatus ===
+                                        <tbody>
+                                            {attendanceData.map((record, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {new Date(
+                                                            record.date
+                                                        ).toLocaleDateString()}
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            className={`badge bg-${record.attendanceStatus ===
                                                                 "PRESENT"
                                                                 ? "success"
                                                                 : "danger"
-                                                            }`}
-                                                    >
-                                                        {
-                                                            record.attendanceStatus
-                                                        }
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {formatTime(record.checkInTime) ||
-                                                        "--:--"}
-                                                </td>
-                                                <td>
-                                                    {formatTime(record.checkOutTime) ||
-                                                        "--:--"}
-                                                </td>
-                                                <td>
-                                                    {(record.workedTime ?? 0)}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                                }`}
+                                                        >
+                                                            {
+                                                                record.attendanceStatus
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {formatTime(record.checkInTime) ||
+                                                            "--:--"}
+                                                    </td>
+                                                    <td>
+                                                        {formatTime(record.checkOutTime) ||
+                                                            "--:--"}
+                                                    </td>
+                                                    <td>
+                                                        {(record.workedTime ?? 0)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="attendance-mobile-list">
+                                    {attendanceData.map((record, index) => (
+                                        <div className="attendance-card mobile-card" key={index}>
+
+                                            <div className="field">
+                                                <div className="label">Date</div>
+                                                <div className="value">{new Date(record.date).toLocaleDateString()}</div>
+                                            </div>
+
+                                            <div className="field">
+                                                <div className="label">Status</div>
+                                                <span className={`badge bg-${record.attendanceStatus === "PRESENT" ? "success" : "danger"}`}>
+                                                    {record.attendanceStatus}
+                                                </span>
+                                            </div>
+
+                                            <div className="field">
+                                                <div className="label">Check In</div>
+                                                <div className="value">{formatTime(record.checkInTime) || "--:--"}</div>
+                                            </div>
+
+                                            <div className="field">
+                                                <div className="label">Check Out</div>
+                                                <div className="value">{formatTime(record.checkOutTime) || "--:--"}</div>
+                                            </div>
+
+                                            <div className="field">
+                                                <div className="label">Hours Worked</div>
+                                                <div className="value">{record.workedTime ?? 0}</div>
+                                            </div>
+
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+
                         ) : (
                             <p>No attendance records for this date</p>
                         )}
@@ -156,7 +194,8 @@ const Attendance = () => {
                 <Card className="mt-4">
                     <Card.Header as="h5">Attendance on {date}</Card.Header>
                     <Card.Body>
-                        <div className="table-responsive">
+
+                        <div className="table-responsive attendance-table">
                             <Table hover>
                                 <thead>
                                     <tr>
@@ -181,9 +220,9 @@ const Attendance = () => {
                                             <td>
                                                 <span
                                                     className={`badge bg-${rec.attendanceStatus ===
-                                                            "PRESENT"
-                                                            ? "success"
-                                                            : "danger"
+                                                        "PRESENT"
+                                                        ? "success"
+                                                        : "danger"
                                                         }`}
                                                 >
                                                     {rec.attendanceStatus}
@@ -198,6 +237,42 @@ const Attendance = () => {
                                     ))}
                                 </tbody>
                             </Table>
+                        </div>
+                        {/* MOBILE CARD VIEW */}
+                        <div className="attendance-mobile-list">
+                            {attendanceData.map((record, index) => (
+                                <div className="attendance-card mobile-card" key={index}>
+
+                                    <div className="field">
+                                        <div className="label">Employee</div>
+                                        <div className="value">{record.employeeName}</div>
+                                        <small className="text-muted">ID: {record.employeeCode}</small>
+                                    </div>
+
+                                    <div className="field">
+                                        <div className="label">Status</div>
+                                        <span className={`badge bg-${record.attendanceStatus === "PRESENT" ? "success" : "danger"}`}>
+                                            {record.attendanceStatus}
+                                        </span>
+                                    </div>
+
+                                    <div className="field">
+                                        <div className="label">Check In</div>
+                                        <div className="value">{formatTime(record.checkInTime) || "--:--"}</div>
+                                    </div>
+
+                                    <div className="field">
+                                        <div className="label">Check Out</div>
+                                        <div className="value">{formatTime(record.checkOutTime) || "--:--"}</div>
+                                    </div>
+
+                                    <div className="field">
+                                        <div className="label">Hours Worked</div>
+                                        <div className="value">{record.workedTime ?? 0}</div>
+                                    </div>
+
+                                </div>
+                            ))}
                         </div>
                     </Card.Body>
                 </Card>
