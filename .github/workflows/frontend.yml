@@ -52,7 +52,6 @@ jobs:
 
       - name: Sync static assets (long cache)
         run: |
-          # sync static assets (adjust path if your build outputs to different folder)
           aws s3 sync build/static s3://${{ secrets.FRONTEND_S3_BUCKET }}/static \
             --cache-control "max-age=31536000,public,immutable" --acl private --delete --region ${{ secrets.AWS_REGION }}
 
@@ -60,7 +59,13 @@ jobs:
         run: |
           aws s3 sync build/ s3://${{ secrets.FRONTEND_S3_BUCKET }} --exclude "static/*" --exclude "index.html" --delete --acl private --region ${{ secrets.AWS_REGION }}
 
-      - name: Invalidate CloudFront Cache (if configured)
-        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+      - name: Invalidate CloudFront Cache (conditional)
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          if [ -n "${CLOUDFRONT_DISTRIBUTION_ID}" ]; then
+            echo "Invalidating CloudFront distribution ${CLOUDFRONT_DISTRIBUTION_ID}"
+            aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
+          else
+            echo "CLOUDFRONT_DISTRIBUTION_ID not set; skipping invalidation"
+          fi
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
