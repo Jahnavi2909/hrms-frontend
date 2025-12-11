@@ -1,45 +1,59 @@
-
-name: Frontend CI/CD
+name: Deploy Frontend to S3 and CloudFront
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout repo
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      # 3️⃣ Install dependencies
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
 
-      - name: Build React App
-        run: npm run build
+      # 4️⃣ Build project (creates dist/)
+      - name: Build Project
+        run: CI=false npm run build
 
-      - name: Deploy to S3
+      # 5️⃣ Debug step: verify dist folder
+      - name: Debug - Check Build Folder
         run: |
-          aws s3 sync build/ s3://$FRONTEND_S3_BUCKET --delete
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          echo "Listing repo root:"
+          ls -la
+          echo "Listing dist folder:"
+          ls -la dist || echo "Dist folder not found!"
 
+      # 6️⃣ Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # 7️⃣ Deploy dist/ to S3
+      - name: Deploy to S3
+        run: aws s3 sync dist/ s3://ticketfrontends --delete
+
+      # 8️⃣ Invalidate CloudFront cache (optional)
       - name: Invalidate CloudFront Cache
+        env:
+          CF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        if: env.CF_ID
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-id $CF_ID \
             --paths "/*"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
