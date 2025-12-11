@@ -22,7 +22,7 @@ jobs:
 
       # 3️⃣ Install dependencies
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       # 4️⃣ Build project (creates dist/)
       - name: Build Project
