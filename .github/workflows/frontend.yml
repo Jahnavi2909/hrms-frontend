@@ -5,38 +5,35 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      # 3️⃣ Install dependencies
       - name: Install Dependencies
         run: npm install
 
-      # 4️⃣ Build project (creates dist/)
       - name: Build Project
         run: CI=false npm run build
 
-      # 5️⃣ Debug step: verify dist folder
       - name: Debug - Check Build Folder
         run: |
           echo "Listing repo root:"
           ls -la
-          echo "Listing dist folder:"
-          ls -la dist || echo "Dist folder not found!"
+          echo "Listing build folder (expected output):"
+          ls -la build || echo "Build folder not found!"
 
-      # 6️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -44,16 +41,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      # 7️⃣ Deploy dist/ to S3
-      - name: Deploy to S3
-        run: aws s3 sync dist/ s3://hrmsportals --delete
+      - name: Who am I? (debug)
+        run: aws sts get-caller-identity || true
 
-      # 8️⃣ Invalidate CloudFront cache (optional)
-      - name: Invalidate CloudFront Cache
+      - name: Deploy to S3
+        run: aws s3 sync build/ s3://hrmsportals --delete
+
+      - name: Invalidate CloudFront Cache (conditional)
         env:
           CF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-        if: env.CF_ID
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id $CF_ID \
-            --paths "/*"
+          if [ -n "${CF_ID}" ]; then
+            echo "Invalidating CloudFront distribution ${CF_ID}"
+            aws cloudfront create-invalidation --distribution-id "${CF_ID}" --paths "/*"
+          else
+            echo "CLOUDFRONT_DISTRIBUTION_ID not set; skipping invalidation"
+          fi
