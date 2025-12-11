@@ -23,9 +23,7 @@
   }
 }
 
-/* 
-   CHECK-IN / CHECK-OUT CARD RESPONSIVE
-*/
+
 @media (max-width: 768px) {
   .card .card-body p {
     font-size: 14px !important;
@@ -37,9 +35,7 @@
   }
 }
 
-/* 
-   STATS GRID (Admin Overview)
-*/
+/* STATS GRID (Admin Overview) */
 @media (max-width: 992px) {
   .stat-card h3 {
     font-size: 24px !important;
@@ -68,9 +64,7 @@
   }
 }
 
-/* 
-   TABS RESPONSIVE
- */
+/* TABS RESPONSIVE */
 @media (max-width: 768px) {
   .nav-tabs .nav-link {
     font-size: 14px !important;
@@ -78,9 +72,7 @@
   }
 }
 
-/* 
-   EMPLOYEE TABLE (Admin > Employees)
-*/
+/*  EMPLOYEE TABLE  */
 @media (max-width: 768px) {
 
   table th,
@@ -109,9 +101,7 @@
   }
 }
 
-/* 
-   EMPLOYEE DASHBOARD LAYOUT
-*/
+/* EMPLOYEE DASHBOARD LAYOUT */
 @media (max-width: 992px) {
 
   .employee-dashboard .row>.col-md-8,
@@ -121,9 +111,7 @@
   }
 }
 
-/* 
-   QUICK LINKS CARD
- */
+/* QUICK LINKS CARD */
 @media (max-width: 768px) {
   .employee-dashboard .btn.w-100 {
     font-size: 14px !important;
@@ -131,9 +119,7 @@
   }
 }
 
-/* 
-   COLLAPSIBLE FORM
- */
+/* COLLAPSIBLE FORM */
 @media (max-width: 768px) {
 
   .collapse .card,
@@ -142,9 +128,7 @@
   }
 }
 
-/* 
-   EMPLOYEE FORM BUTTONS
-*/
+/* EMPLOYEE FORM BUTTONS */
 @media (max-width: 768px) {
   .collapse .btn {
     width: 100% !important;
@@ -152,9 +136,7 @@
   }
 }
 
-/* 
-   GENERAL TEXT SIZE FOR SMALL DEVICES
- */
+/* GENERAL TEXT SIZE FOR SMALL DEVICES */
 @media (max-width: 480px) {
 
   p,

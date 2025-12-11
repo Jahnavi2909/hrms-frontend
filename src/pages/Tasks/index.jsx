@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Card, Form, Table, Button, Alert, Badge } from "react-bootstrap";
+import { Card, Form, Table, Button, Alert, Badge, Collapse } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
-import { taskApi, employeeApi } from "../../services/api"; 
+import { taskApi, employeeApi } from "../../services/api";
 import "./style.css";
 
 const TaskCreateForm = ({ onAdd }) => {
@@ -15,6 +15,7 @@ const TaskCreateForm = ({ onAdd }) => {
   const [employeesList, setEmployeesList] = useState([]);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchEmployees();
@@ -66,73 +67,82 @@ const TaskCreateForm = ({ onAdd }) => {
 
   return (
     <Card className="mt-4">
-      <Card.Header as="h5">Create New Task</Card.Header>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Card.Header as="h5">Create New Task</Card.Header>
+        <Button type="submit" variant="primary" style={{marginRight :"20px", marginTop:"10px"}} onClick={() => setIsOpen(!isOpen)}>
+         {isOpen ? "Close Form" : "Create Task"}
+        </Button>
+      </div>
       <Card.Body>
         {message && <Alert variant="success">{message}</Alert>}
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Task Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter task title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </Form.Group>
+        <Collapse in={isOpen}>
+          <Form onSubmit={handleSubmit}>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Assign To</Form.Label>
-            <Form.Select
-              value={employee}
-              onChange={(e) => setEmployee(e.target.value)}
-            >
-              <option value="">-- Select Employee --</option>
-              {employeesList.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.firstName} {emp.lastName} ({emp.id})
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Task Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter task title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Optional"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Assign To</Form.Label>
+              <Form.Select
+                value={employee}
+                onChange={(e) => setEmployee(e.target.value)}
+              >
+                <option value="">-- Select Employee --</option>
+                {employeesList.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.firstName} {emp.lastName} ({emp.id})
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Due Date</Form.Label>
-            <Form.Control
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Optional"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Priority</Form.Label>
-            <Form.Select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-            >
-              <option value="HIGH">High</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="LOW">Low</option>
-            </Form.Select>
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Due Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
+            </Form.Group>
 
-          <Button type="submit" variant="primary">
-            Create Task
-          </Button>
-        </Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Priority</Form.Label>
+              <Form.Select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+              >
+                <option value="HIGH">High</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="LOW">Low</option>
+              </Form.Select>
+            </Form.Group>
+            <Button type="submit" variant="primary" onClick={() => setIsOpen(!isOpen)}>
+              Create Task
+            </Button>
+          </Form>
+        </Collapse>
+
+
       </Card.Body>
     </Card>
   );
@@ -244,7 +254,7 @@ const Tasks = () => {
                     <td>
                       <Badge
                         bg={t.status === "COMPLETED" ? "success" :
-                            t.status === "IN_PROGRESS" ? "primary" : "warning"}
+                          t.status === "IN_PROGRESS" ? "primary" : "warning"}
                       >
                         {t.status}
                       </Badge>

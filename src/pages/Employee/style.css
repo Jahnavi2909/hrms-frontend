@@ -1,6 +1,4 @@
-/* 
-   PAGE TITLE & ADD BUTTON
-*/
+/* PAGE TITLE & ADD BUTTON */
 @media (max-width: 768px) {
   h2 {
     font-size: 20px !important;
@@ -16,18 +14,14 @@
   }
 }
 
-/* 
-   SEARCH BAR
- */
+/* SEARCH BAR */
 @media (max-width: 768px) {
   .mb-3.d-flex.justify-content-between .form-control {
     width: 100% !important;
   }
 }
 
-/* 
-   TABLE RESPONSIVE
-*/
+/* TABLE RESPONSIVE */
 .table-responsive {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -53,9 +47,7 @@
   }
 }
 
-/* 
-   ACTION BUTTONS (Edit/Delete)
- */
+/* ACTION BUTTONS (Edit or Delete) */
 @media (max-width: 576px) {
   td .d-flex {
     flex-direction: column;
@@ -69,24 +61,18 @@
   }
 }
 
-/* 
-   WHEN NO DATA
- */
+/*  WHEN NO DATA*/
 td.text-center {
   font-size: 15px !important;
 }
 
-/* 
-   COLLAPSED FORM CONTAINER
-*/
+/*  COLLAPSED FORM CONTAINER*/
 .collapse > div {
   margin-bottom: 20px;
 }
 
 
-/* 
-   EMPLOYEE FORM CARD
- */
+/*  EMPLOYEE FORM CARD */
 .employee-form-card {
   max-width: 1500px;
   width: 100%;
@@ -110,9 +96,7 @@ td.text-center {
   }
 }
 
-/* 
-   FORM BUTTONS
-*/
+/* FORM BUTTONS */
 @media (max-width: 576px) {
   .employee-form-card button {
     width: 100% !important;

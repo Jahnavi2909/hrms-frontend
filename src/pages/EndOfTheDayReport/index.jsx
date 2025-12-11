@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Form, Table, Button, Alert } from "react-bootstrap";
+import { Card, Form, Table, Button, Alert, Collapse } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 import { eodApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -12,6 +12,7 @@ const EODForm = ({ onAdd, user }) => {
   const [blockers, setBlockers] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +38,7 @@ const EODForm = ({ onAdd, user }) => {
       setBlockers("");
       setMessage("EOD submitted successfully!");
       setError(null);
+      setIsOpen(false);
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       console.error(err);
@@ -46,36 +48,43 @@ const EODForm = ({ onAdd, user }) => {
 
   return (
     <Card className="mt-4">
-      <Card.Header as="h5">Submit EOD Report</Card.Header>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Card.Header as="h5">Submit EOD Report</Card.Header>
+        <Button type="button" variant="primary" style={{ marginRight: "20px", marginTop: "10px" }} onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? "Close Form" : "Fill EOD Report"}
+        </Button>
+      </div>
       <Card.Body>
         {message && <Alert variant="success">{message}</Alert>}
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <Form onSubmit={handleSubmit} className="eod-form">
-          <Form.Group className="mb-3">
-            <Form.Label>Work Summary</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={workSummary}
-              onChange={(e) => setWorkSummary(e.target.value)}
-            />
-          </Form.Group>
+        <Collapse in={isOpen}>
+          <Form onSubmit={handleSubmit} className="eod-form">
+            <Form.Group className="mb-3">
+              <Form.Label>Work Summary</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={workSummary}
+                onChange={(e) => setWorkSummary(e.target.value)}
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Blockers / Issues (Optional)</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={2}
-              value={blockers}
-              onChange={(e) => setBlockers(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Blockers / Issues (Optional)</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                value={blockers}
+                onChange={(e) => setBlockers(e.target.value)}
+              />
+            </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Submit EOD
-          </Button>
-        </Form>
+            <Button variant="primary" type="submit">
+              Submit EOD
+            </Button>
+          </Form>
+        </Collapse>
       </Card.Body>
     </Card>
   );
@@ -213,10 +222,10 @@ const EndOfTheDayReport = () => {
                       <td>
                         <span
                           className={`badge bg-${e.status === "APPROVED"
-                              ? "success"
-                              : e.status === "REJECTED"
-                                ? "danger"
-                                : "primary"
+                            ? "success"
+                            : e.status === "REJECTED"
+                              ? "danger"
+                              : "primary"
                             }`}
                         >
                           {e.status}

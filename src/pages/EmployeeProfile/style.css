@@ -1,15 +1,11 @@
 
-/* 
-   EMPLOYEE PROFILE CONTAINER
-*/
+/* EMPLOYEE PROFILE CONTAINER */
 .employee-profile {
   width: 100%;
   padding: 0 15px;
 }
 
-/* 
-   PROFILE HEADER SECTION
-*/
+/* PROFILE HEADER SECTION */
 .profile-header {
   position: relative;
   width: 100%;
@@ -34,9 +30,7 @@
   margin-top: -60px;
 }
 
-/* 
-   AVATAR SECTION
-*/
+/* AVATAR SECTION */
 .profile-avatar {
   width: 110px;
   height: 110px;
@@ -55,9 +49,7 @@
   color: #555;
 }
 
-/* 
-   PROFILE META DETAILS
-*/
+/* PROFILE META DETAILS */
 .profile-meta h2 {
   margin: 0;
   font-weight: 700;
@@ -69,9 +61,7 @@
   margin-top: 5px;
 }
 
-/* 
-   RESPONSIVE HEADER
-*/
+/* RESPONSIVE HEADER */
 @media (max-width: 768px) {
   .profile-info {
     flex-direction: column;
@@ -79,9 +69,7 @@
   }
 }
 
-/* 
-   TABS STYLING
-*/
+/* TABS STYLING */
 .profile-tabs .nav-link {
   font-weight: 600;
 }
@@ -90,9 +78,7 @@
   border-bottom: 3px solid #0d6efd;
 }
 
-/* 
-   CARD STYLING
-*/
+/* CARD STYLING */
 .card {
   border-radius: 12px !important;
 }
@@ -101,16 +87,12 @@
   font-weight: bold !important;
 }
 
-/* 
-   PERSONAL INFORMATION TEXTS
-*/
+/*  PERSONAL INFORMATION TEXTS*/
 .card-body p {
   font-size: 15px;
 }
 
-/* 
-   QUICK STATS BOX
-*/
+/* QUICK STATS BOX */
 .stat-item {
   display: flex;
   align-items: center;
@@ -118,9 +100,7 @@
   padding: 10px 0;
 }
 
-/* 
-   TABLE RESPONSIVE
-*/
+/* TABLE RESPONSIVE */
 .table-responsive {
   overflow-x: auto;
 }
@@ -145,9 +125,7 @@ table td {
   }
 }
 
-/* 
-   MOBILE CARD STACKING
-*/
+/* MOBILE CARD STACKING */
 @media (max-width: 768px) {
   .row > div {
     margin-bottom: 20px !important;

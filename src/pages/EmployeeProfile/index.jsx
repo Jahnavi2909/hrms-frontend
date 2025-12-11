@@ -17,11 +17,11 @@ const EmployeeProfile = () => {
     useEffect(() => {
         const fetchEmployeeData = async () => {
             try {
-                const response = await employeeApi.getById(id);
+                const response = await employeeApi.getById(user.employeeId || id);
                 console.log(response)
                 setEmployee(response.data.data);
 
-                const attendanceRes = await attendanceApi.getAttendanceHistory(id);
+                const attendanceRes = await attendanceApi.getAttendanceHistory(user.employeeId || id);
                 console.log(attendanceRes.data.data)
                 setAttendance(attendanceRes.data.data || []);
             } catch (error) {
@@ -54,7 +54,7 @@ const EmployeeProfile = () => {
                         <p className="text-muted">{employee.designation}</p>
                         <div className="employee-meta">
                             <span><FaIdCard className="me-2" /> Employee ID: {employee.employeeId || 'N/A'}</span>
-                            <span><FaUserTie className="me-2" /> {employee.department}</span>
+                            <span><FaUserTie className="me-2" /> {employee.departmentName}</span>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ const EmployeeProfile = () => {
                                         <FaClock className="me-2" />
                                         <div>
                                             <h6>Total Working Days</h6>
-                                            <p className="mb-0">{attendance.filter(a => a.status === 'PRESENT').length} days</p>
+                                            <p className="mb-0">{attendance.filter(a => a.attendanceStatus === 'PRESENT' || a.attendanceStatus === 'HALF_DAY').length} days</p>
                                         </div>
                                     </div>
                                 </Card.Body>

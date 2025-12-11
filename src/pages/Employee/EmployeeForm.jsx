@@ -106,6 +106,11 @@ const EmployeeForm = ({ editingEmployee, onSubmit, onCancel }) => {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" name="password" value={formData.password || ""} onChange={handleChange} required />
                             </div>
+                            
+                            <div className="col-md-6 mb-2">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" name="password" value={formData.password || ""} onChange={handleChange} required />
+                            </div>
 
                         </div>
                         <div className="d-flex">

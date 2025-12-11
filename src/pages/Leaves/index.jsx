@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, Form, Table, Button, Alert } from "react-bootstrap";
+import { Card, Form, Table, Button, Alert, Collapse } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 import { leaveApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -12,6 +12,7 @@ const LeaveApplyForm = ({ refresh }) => {
   const [reason, setReason] = useState("");
   const [msg, setMsg] = useState(null);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { user } = useAuth();
 
@@ -35,6 +36,7 @@ const LeaveApplyForm = ({ refresh }) => {
       await leaveApi.apply(payload);
       setMsg("Leave applied successfully!");
       refresh();
+      setIsOpen(false);
     } catch (e) {
       setError("Failed to apply leave");
     }
@@ -42,43 +44,50 @@ const LeaveApplyForm = ({ refresh }) => {
 
   return (
     <Card className="mt-4">
-      <Card.Header>Apply Leave</Card.Header>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Card.Header>Apply Leave</Card.Header>
+        <Button type="button" variant="primary" style={{ marginRight: "20px", marginTop: "10px" }} onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? "Close Form" : "Apply Leave"}
+        </Button>
+      </div>
       <Card.Body>
         {msg && <Alert variant="success">{msg}</Alert>}
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Leave Type</Form.Label>
-            <Form.Select value={leaveType} onChange={(e) => setLeaveType(e.target.value)}>
-              <option value="SICK">Sick Leave</option>
-              <option value="CASUAL">Casual Leave</option>
-              <option value="ANNUAL">Annual Leave</option>
-            </Form.Select>
-          </Form.Group>
+        <Collapse in={isOpen}>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Leave Type</Form.Label>
+              <Form.Select value={leaveType} onChange={(e) => setLeaveType(e.target.value)}>
+                <option value="SICK">Sick Leave</option>
+                <option value="CASUAL">Casual Leave</option>
+                <option value="ANNUAL">Annual Leave</option>
+              </Form.Select>
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>From</Form.Label>
-            <Form.Control type="date" value={startDate} onChange={(e) => setFromDate(e.target.value)} />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>From</Form.Label>
+              <Form.Control type="date" value={startDate} onChange={(e) => setFromDate(e.target.value)} />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>To</Form.Label>
-            <Form.Control type="date" value={endDate} onChange={(e) => setToDate(e.target.value)} />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>To</Form.Label>
+              <Form.Control type="date" value={endDate} onChange={(e) => setToDate(e.target.value)} />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Reason</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Reason</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+              />
+            </Form.Group>
 
-          <Button type="submit">Apply</Button>
-        </Form>
+            <Button type="submit">Apply</Button>
+          </Form>
+        </Collapse>
       </Card.Body>
     </Card>
   );
@@ -97,7 +106,7 @@ const Leaves = () => {
     try {
       let res;
 
-      if (user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR") {
+      if (user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") {
         res = await leaveApi.getAll();
       } else {
         res = await leaveApi.getByEmployee(employeeId);
@@ -117,22 +126,22 @@ const Leaves = () => {
 
   // Approve/Reject
   // Approve/Reject
-const handleAction = async (leaveId, actionType) => {
-  const payload = {
-    action: actionType,
-    comment: `${actionType} by ${user.firstName}`,
-    actorEmployeeId: user.employeeId   
-  };
+  const handleAction = async (leaveId, actionType) => {
+    const payload = {
+      action: actionType,
+      comment: `${actionType} by ${user.firstName}`,
+      actorEmployeeId: user.employeeId
+    };
 
-  try {
-    await leaveApi.actOnLeave(leaveId, payload);
-    setMessage(`Leave ${actionType.toLowerCase()} successfully`);
-    loadLeaves();
-  } catch (err) {
-    console.error("Action error:", err);
-    setMessage("Failed to perform action");
-  }
-};
+    try {
+      await leaveApi.actOnLeave(leaveId, payload);
+      setMessage(`Leave ${actionType.toLowerCase()} successfully`);
+      loadLeaves();
+    } catch (err) {
+      console.error("Action error:", err);
+      setMessage("Failed to perform action");
+    }
+  };
 
 
   // Filter by date
@@ -145,7 +154,7 @@ const handleAction = async (leaveId, actionType) => {
   return (
     <div>
       <div className="d-flex justify-content-between mb-3">
-        <h2>{(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR") ? "Leaves Management" : "My Leaves"}</h2>
+        <h2>{(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") ? "Leaves Management" : "My Leaves"}</h2>
 
         <Form.Group className="d-flex">
           <Form.Label className="me-2">
@@ -171,13 +180,13 @@ const handleAction = async (leaveId, actionType) => {
             <Table hover>
               <thead>
                 <tr>
-                  {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR") && <th>Employee</th>}
+                  {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") && <th>Employee</th>}
                   <th>Type</th>
                   <th>Status</th>
                   <th>From</th>
                   <th>To</th>
                   <th>Days</th>
-                  {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR") && <th>Actions</th>}
+                  {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") && <th>Actions</th>}
                 </tr>
               </thead>
 
@@ -185,7 +194,7 @@ const handleAction = async (leaveId, actionType) => {
                 {filteredLeaves.length ? (
                   filteredLeaves.map((l) => (
                     <tr key={l.id}>
-                      {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR") && (
+                      {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") && (
                         <td>
                           {l.employeeName}
                           <br />
@@ -196,13 +205,12 @@ const handleAction = async (leaveId, actionType) => {
                       <td>{l.leaveType}</td>
                       <td>
                         <span
-                          className={`badge bg-${
-                            l.status === "APPROVED"
-                              ? "success"
-                              : l.status === "REJECTED"
+                          className={`badge bg-${l.status === "APPROVED"
+                            ? "success"
+                            : l.status === "REJECTED"
                               ? "danger"
                               : "warning"
-                          }`}
+                            }`}
                         >
                           {l.status}
                         </span>
@@ -212,7 +220,7 @@ const handleAction = async (leaveId, actionType) => {
                       <td>{l.endDate}</td>
                       <td>{l.days}</td>
 
-                      {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER"|| user.role === "ROLE_HR")&& (
+                      {(user.role === "ROLE_ADMIN" || user.role === "ROLE_MANAGER" || user.role === "ROLE_HR") && (
                         <td>
                           {l.status === "PENDING" ? (
                             <>

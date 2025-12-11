@@ -14,14 +14,14 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = Cookies.get("user");
-    const token = Cookies.get("token");
+    const savedUser = Cookies.get("user");
+    const savedToken = Cookies.get("token");
 
-    if (userData && token) {
+    if (savedUser && savedToken) {
       try {
-        const parsedUser = JSON.parse(userData);
+        const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
-        setToken(token);
+        setToken(savedToken);
       } catch (error) {
         Cookies.remove("user");
         Cookies.remove("token");
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-//login
+  //login
   const login = async (email, password) => {
     try {
       setError("");
@@ -41,10 +41,15 @@ export const AuthProvider = ({ children }) => {
       if (response.data && response.data.data) {
         const { token, ...userData } = response.data.data;
 
-        Cookies.set("token", token, { expires: 7 }); 
-        Cookies.set("user", JSON.stringify(userData));
+        let finalUserData = { ...userData };
+        if (!finalUserData.role) {
+          finalUserData.role = "EMPLOYEE";
+        }
 
-        setUser(userData);
+        Cookies.set("token", token, { expires: 7 });
+        Cookies.set("user", JSON.stringify(finalUserData), { expires: 7 });
+
+        setUser(finalUserData);
         setToken(token);
 
         return { success: true };
@@ -70,12 +75,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- //signup
+  //signup
   const signup = async ({ username, email, password, role, secretKey }) => {
     try {
       setError("");
 
-    
+
       if (["ADMIN", "HR", "MANAGER"].includes(role?.toUpperCase()) && secretKey !== process.env.REACT_APP_ADMIN_SECRET) {
         return { success: false, message: "Unauthorized role creation" };
       }
@@ -83,15 +88,15 @@ export const AuthProvider = ({ children }) => {
       const response = await authApi.signup({ username, email, password, role });
 
       if (response.data && response.data.data) {
-        return { 
-          success: true, 
-          message: response.data.message || "Signup successful! Please login." 
+        return {
+          success: true,
+          message: response.data.message || "Signup successful! Please login."
         };
       }
 
-      return { 
-        success: false, 
-        message: response.data?.message || "Signup failed. Please try again." 
+      return {
+        success: false,
+        message: response.data?.message || "Signup failed. Please try again."
       };
 
     } catch (error) {
@@ -103,7 +108,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout 
-  
+
   const logout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
