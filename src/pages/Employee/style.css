@@ -1,0 +1,125 @@
+/* 
+   PAGE TITLE & ADD BUTTON
+*/
+@media (max-width: 768px) {
+  h2 {
+    font-size: 20px !important;
+  }
+
+  .d-flex.justify-content-between.mb-4 {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .d-flex.justify-content-between.mb-4 button {
+    width: 100% !important;
+  }
+}
+
+/* 
+   SEARCH BAR
+ */
+@media (max-width: 768px) {
+  .mb-3.d-flex.justify-content-between .form-control {
+    width: 100% !important;
+  }
+}
+
+/* 
+   TABLE RESPONSIVE
+*/
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  table th,
+  table td {
+    font-size: 14px !important;
+    padding: 8px !important;
+  }
+
+  table td small {
+    font-size: 12px !important;
+  }
+}
+
+
+@media (max-width: 480px) {
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    display: none !important;
+  }
+}
+
+/* 
+   ACTION BUTTONS (Edit/Delete)
+ */
+@media (max-width: 576px) {
+  td .d-flex {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  td .btn {
+    width: 100% !important;
+    text-align: left;
+    padding-left: 0 !important;
+  }
+}
+
+/* 
+   WHEN NO DATA
+ */
+td.text-center {
+  font-size: 15px !important;
+}
+
+/* 
+   COLLAPSED FORM CONTAINER
+*/
+.collapse > div {
+  margin-bottom: 20px;
+}
+
+
+/* 
+   EMPLOYEE FORM CARD
+ */
+.employee-form-card {
+  max-width: 1500px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .employee-form-card {
+    padding: 0 10px;
+  }
+
+  .employee-form-card .row .col-md-6 {
+    margin-bottom: 12px !important;
+  }
+
+  .employee-form-card label {
+    font-size: 14px !important;
+  }
+
+  .employee-form-card input {
+    font-size: 14px !important;
+  }
+}
+
+/* 
+   FORM BUTTONS
+*/
+@media (max-width: 576px) {
+  .employee-form-card button {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+
+  .employee-form-card .btn-secondary {
+    margin-left: 0 !important;
+  }
+}

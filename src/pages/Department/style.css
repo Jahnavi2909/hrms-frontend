@@ -1,0 +1,95 @@
+/* 
+   PAGE TITLE RESPONSIVE
+*/
+@media (max-width: 768px) {
+  h1.mb-4 {
+    font-size: 22px !important;
+    margin-bottom: 16px !important;
+  }
+}
+
+/* 
+   ADD DEPARTMENT CARD FORM
+ */
+@media (max-width: 768px) {
+  .card-body .d-flex.gap-2.flex-wrap {
+    flex-direction: column !important;
+  }
+
+  .card-body .d-flex.gap-2.flex-wrap .form-control {
+    width: 100% !important;
+  }
+
+  .card-body .d-flex.gap-2.flex-wrap button {
+    width: 100% !important;
+  }
+}
+
+/* 
+   TABLE RESPONSIVE
+*/
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  table th,
+  table td {
+    font-size: 14px !important;
+    padding: 10px 8px !important;
+  }
+
+  table button {
+    padding: 4px 8px !important;
+    margin-bottom: 5px !important;
+  }
+}
+
+/* Hide ID column on very small screens */
+@media (max-width: 480px) {
+  table th:first-child,
+  table td:first-child {
+    display: none;
+  }
+}
+
+/* 
+   BUTTONS (Edit / Delete)
+ */
+@media (max-width: 480px) {
+  table .btn {
+    width: 100% !important;
+    text-align: center;
+  }
+}
+
+/* 
+   EMPTY DATA MESSAGE
+*/
+@media (max-width: 768px) {
+  table td.text-center {
+    font-size: 14px !important;
+  }
+}
+
+/* 
+   MODAL RESPONSIVE
+*/
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0 10px !important;
+  }
+
+  .modal-title {
+    font-size: 18px !important;
+  }
+
+  .modal-body .form-control {
+    font-size: 14px !important;
+  }
+
+  .modal-footer button {
+    width: 100% !important;
+  }
+}

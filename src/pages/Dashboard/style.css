@@ -1,0 +1,168 @@
+/* GLOBAL PAGE SPACING (MOBILE) */
+@media (max-width: 768px) {
+  .py-4 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  h2 {
+    font-size: 22px !important;
+  }
+
+  h4 {
+    font-size: 18px !important;
+  }
+}
+
+/*  HEADER (TITLE + BUTTON ROW) */
+@media (max-width: 768px) {
+  .d-flex.justify-content-between.mb-4 {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+}
+
+/* 
+   CHECK-IN / CHECK-OUT CARD RESPONSIVE
+*/
+@media (max-width: 768px) {
+  .card .card-body p {
+    font-size: 14px !important;
+  }
+
+  .card .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* 
+   STATS GRID (Admin Overview)
+*/
+@media (max-width: 992px) {
+  .stat-card h3 {
+    font-size: 24px !important;
+  }
+
+  .stat-card h6 {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .stat-card {
+    text-align: center;
+  }
+
+  .g-4>[class^="col"] {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .g-4>[class^="col"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* 
+   TABS RESPONSIVE
+ */
+@media (max-width: 768px) {
+  .nav-tabs .nav-link {
+    font-size: 14px !important;
+    padding: 8px !important;
+  }
+}
+
+/* 
+   EMPLOYEE TABLE (Admin > Employees)
+*/
+@media (max-width: 768px) {
+
+  table th,
+  table td {
+    padding: 8px 6px !important;
+    font-size: 13px !important;
+  }
+
+  table .btn {
+    padding: 4px 6px !important;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    display: none;
+  }
+}
+
+/* 
+   EMPLOYEE DASHBOARD LAYOUT
+*/
+@media (max-width: 992px) {
+
+  .employee-dashboard .row>.col-md-8,
+  .employee-dashboard .row>.col-md-4 {
+    max-width: 100%;
+    flex: 100%;
+  }
+}
+
+/* 
+   QUICK LINKS CARD
+ */
+@media (max-width: 768px) {
+  .employee-dashboard .btn.w-100 {
+    font-size: 14px !important;
+    padding: 10px !important;
+  }
+}
+
+/* 
+   COLLAPSIBLE FORM
+ */
+@media (max-width: 768px) {
+
+  .collapse .card,
+  .collapse form {
+    padding: 10px !important;
+  }
+}
+
+/* 
+   EMPLOYEE FORM BUTTONS
+*/
+@media (max-width: 768px) {
+  .collapse .btn {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+}
+
+/* 
+   GENERAL TEXT SIZE FOR SMALL DEVICES
+ */
+@media (max-width: 480px) {
+
+  p,
+  small {
+    font-size: 12px !important;
+  }
+
+  td small {
+    display: block;
+  }
+}

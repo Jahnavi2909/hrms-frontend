@@ -1,0 +1,166 @@
+/* GLOBAL HEADER STYLES */
+
+.nav-bar {
+  height: 70px;
+  z-index: 1030;
+}
+
+.brand {
+  margin-left: 260px ;
+}
+
+/* Avatar Circle */
+.avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.dropdown-menu .dropdown-item .link {
+  color: inherit !important;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+}
+
+
+.dropdown-menu .dropdown-item {
+  padding: 10px 16px;
+}
+
+
+.dropdown-menu .dropdown-item:hover .link {
+  color: var(--bs-primary) !important;
+}
+
+
+.nav .badge {
+  font-size: 0.65rem !important;
+  padding: 4px 6px !important;
+}
+
+
+@media (max-width: 768px) {
+
+
+  .nav-bar {
+    height: 60px;
+  }
+
+
+  .navbar-brand {
+    font-size: 1.2rem !important;
+    margin-right: auto !important;
+  }
+
+
+  .navbar .container-fluid {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+
+  .nav .p-2 {
+    padding: 0.65rem !important;
+  }
+
+  .dropdown-toggle .d-flex {
+    gap: 8px;
+  }
+
+
+  .dropdown-toggle .text-end {
+    display: none !important;
+  }
+
+
+  .avatar-circle {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+
+
+  .dropdown-menu {
+    min-width: 200px !important;
+  }
+
+  .dropdown-header h6 {
+    font-size: 1rem;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  .nav .p-2 {
+    padding: 0.55rem !important;
+  }
+
+  .avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+}
+
+
+/* 
+   SIDEBAR BASE STYLES
+*/
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: #1f2a37;
+    color: white;
+    transition: transform 0.3s ease;
+    z-index: 4000;
+}
+
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+
+.sidebar-link {
+    color: white;
+    font-weight: 500;
+}
+.sidebar-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+
+.sidebar-brand {
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+
+@media (min-width: 992px) {
+    main {
+        margin-left: 250px;
+        transition: margin-left 0.3s ease;
+    }
+}

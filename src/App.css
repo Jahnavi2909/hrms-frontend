@@ -1,0 +1,56 @@
+/* 
+   APP LAYOUT
+    */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.layout-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+
+/* MAIN CONTENT */
+main.p-4 {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  /* padding: 1.5rem !important; */
+}
+
+/* 
+   SCROLLBAR STYLING
+   */
+
+main::-webkit-scrollbar {
+  width: 8px;
+}
+
+main::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+main::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* 
+   RESPONSIVE LAYOUT
+   */
+
+@media (max-width: 992px) {
+  .d-flex {
+    flex-direction: column;
+  }
+  
+  main.p-4 {
+    padding: 1rem !important;
+  }
+}

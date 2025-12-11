@@ -1,0 +1,80 @@
+/* Page Container */
+@media (max-width: 768px) {
+    h1.mb-4 {
+        font-size: 1.6rem;
+        text-align: center;
+    }
+}
+
+/* Filters Card */
+@media (max-width: 768px) {
+    .card-body.d-flex {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .card-body.d-flex .form-group,
+    .card-body.d-flex .btn {
+        width: 100% !important;
+    }
+}
+
+/* Table Wrapper  */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 6px;
+}
+
+/* Table Adjustments for Mobile  */
+@media (max-width: 768px) {
+    table thead {
+        display: none;
+    }
+
+    table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    table tbody tr td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 10px;
+    }
+
+    table tbody tr td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #555;
+    }
+
+    /* Status Circle Center */
+    td .fa-circle {
+        margin-left: auto;
+    }
+
+    /* Actions responsive */
+    td.d-flex {
+        justify-content: space-between;
+    }
+
+    td.d-flex button {
+        flex: 1;
+    }
+}
+
+/*  Button and Badge Fine Tuning  */
+@media (max-width: 480px) {
+    .badge {
+        font-size: 0.75rem !important;
+    }
+
+    button.btn-sm {
+        font-size: 0.75rem !important;
+        padding: 5px 8px !important;
+    }
+}
