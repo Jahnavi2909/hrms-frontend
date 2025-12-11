@@ -124,8 +124,7 @@ const Leaves = () => {
     loadLeaves();
   }, []);
 
-  // Approve/Reject
-  // Approve/Reject
+  // Approve or Reject
   const handleAction = async (leaveId, actionType) => {
     const payload = {
       action: actionType,
