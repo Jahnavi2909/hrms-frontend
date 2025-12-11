@@ -46,7 +46,7 @@ jobs:
 
       # 7️⃣ Deploy dist/ to S3
       - name: Deploy to S3
-        run: aws s3 sync dist/ s3://ticketfrontends --delete
+        run: aws s3 sync dist/ s3://hrmsportals --delete
 
       # 8️⃣ Invalidate CloudFront cache (optional)
       - name: Invalidate CloudFront Cache
