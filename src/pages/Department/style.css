@@ -1,6 +1,4 @@
-/* 
-   PAGE TITLE RESPONSIVE
-*/
+/*  PAGE TITLE RESPONSIVE */
 @media (max-width: 768px) {
   h1.mb-4 {
     font-size: 22px !important;
@@ -8,9 +6,7 @@
   }
 }
 
-/* 
-   ADD DEPARTMENT CARD FORM
- */
+/* ADD DEPARTMENT CARD FORM */
 @media (max-width: 768px) {
   .card-body .d-flex.gap-2.flex-wrap {
     flex-direction: column !important;
@@ -25,9 +21,7 @@
   }
 }
 
-/* 
-   TABLE RESPONSIVE
-*/
+/* TABLE RESPONSIVE */
 .table-responsive {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -54,9 +48,7 @@
   }
 }
 
-/* 
-   BUTTONS (Edit / Delete)
- */
+/* BUTTONS (Edit or Delete)*/
 @media (max-width: 480px) {
   table .btn {
     width: 100% !important;
@@ -64,18 +56,14 @@
   }
 }
 
-/* 
-   EMPTY DATA MESSAGE
-*/
+/* EMPTY DATA MESSAGE */
 @media (max-width: 768px) {
   table td.text-center {
     font-size: 14px !important;
   }
 }
 
-/* 
-   MODAL RESPONSIVE
-*/
+/* MODAL RESPONSIVE */
 @media (max-width: 576px) {
   .modal-dialog {
     margin: 0 10px !important;
