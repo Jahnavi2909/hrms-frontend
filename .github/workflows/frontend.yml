@@ -1,71 +1,59 @@
-name: Frontend CI/CD
+name: Deploy Frontend to S3 and CloudFront
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-
-permissions:
-  id-token: write
-  contents: read
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout repo
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: "npm"
+          node-version: 20
 
-      - name: Cache node modules (explicit)
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      # 3️⃣ Install dependencies
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
 
-      - name: Install dependencies
-        run: npm install
+      # 4️⃣ Build project (creates dist/)
+      - name: Build Project
+        run: CI=false npm run build
 
-      - name: Build React App
-        run: npm run build
+      # 5️⃣ Debug step: verify dist folder
+      - name: Debug - Check Build Folder
+        run: |
+          echo "Listing repo root:"
+          ls -la
+          echo "Listing dist folder:"
+          ls -la dist || echo "Dist folder not found!"
 
-      - name: Configure AWS credentials (recommended)
-        uses: aws-actions/configure-aws-credentials@v2
+      # 6️⃣ Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ap-south-1
 
-      - name: Upload index.html (no-cache)
-        run: |
-          aws s3 cp build/index.html s3://${{ secrets.FRONTEND_S3_BUCKET }}/index.html \
-            --cache-control "no-cache, no-store, must-revalidate" --acl private --region ${{ secrets.AWS_REGION }}
+      # 7️⃣ Deploy dist/ to S3
+      - name: Deploy to S3
+        run: aws s3 sync dist/ s3://ticketfrontends --delete
 
-      - name: Sync static assets (long cache)
-        run: |
-          aws s3 sync build/static s3://${{ secrets.FRONTEND_S3_BUCKET }}/static \
-            --cache-control "max-age=31536000,public,immutable" --acl private --delete --region ${{ secrets.AWS_REGION }}
-
-      - name: Sync remaining files (fallback)
-        run: |
-          aws s3 sync build/ s3://${{ secrets.FRONTEND_S3_BUCKET }} --exclude "static/*" --exclude "index.html" --delete --acl private --region ${{ secrets.AWS_REGION }}
-
-      - name: Invalidate CloudFront Cache (conditional)
-        run: |
-          if [ -n "${CLOUDFRONT_DISTRIBUTION_ID}" ]; then
-            echo "Invalidating CloudFront distribution ${CLOUDFRONT_DISTRIBUTION_ID}"
-            aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
-          else
-            echo "CLOUDFRONT_DISTRIBUTION_ID not set; skipping invalidation"
-          fi
+      # 8️⃣ Invalidate CloudFront cache (optional)
+      - name: Invalidate CloudFront Cache
         env:
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          CF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        if: env.CF_ID
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $CF_ID \
+            --paths "/*"
