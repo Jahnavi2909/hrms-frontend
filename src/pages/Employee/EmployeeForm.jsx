@@ -14,6 +14,7 @@ const EmployeeForm = ({ editingEmployee, onSubmit, onCancel }) => {
         dateOfBirth: "",
         salary: "",
         employeeId: "",
+        address: "",
         password: "",
     });
 
@@ -34,6 +35,7 @@ const EmployeeForm = ({ editingEmployee, onSubmit, onCancel }) => {
                 joiningDate: editingEmployee.joiningDate ? editingEmployee.joiningDate.split("T")[0] : "",
                 dateOfBirth: editingEmployee.dateOfBirth ? editingEmployee.dateOfBirth.split("T")[0] : "",
                 password: "", 
+                address: editingEmployee.address || "",
             });
         }
     }, [editingEmployee]);
@@ -108,8 +110,8 @@ const EmployeeForm = ({ editingEmployee, onSubmit, onCancel }) => {
                             </div>
                             
                             <div className="col-md-6 mb-2">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" name="password" value={formData.password || ""} onChange={handleChange} required />
+                                <Form.Label>Address</Form.Label>
+                                <Form.Control type="text" name="address" value={formData.address || ""} onChange={handleChange} required />
                             </div>
 
                         </div>
