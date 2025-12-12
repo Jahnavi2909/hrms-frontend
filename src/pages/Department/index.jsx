@@ -108,7 +108,7 @@ const Department = () => {
       {message && <Alert variant="success">{message}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Add Department Form  */}
+
       <Card className="mb-4">
         <Card.Header as="h5">Add Department</Card.Header>
         <Card.Body>
@@ -126,7 +126,7 @@ const Department = () => {
         </Card.Body>
       </Card>
 
-      {/*  Department List  */}
+
       <Card>
         <Card.Header as="h5">Department List</Card.Header>
         <Card.Body>
@@ -135,55 +135,91 @@ const Department = () => {
               <Spinner animation="border" />
             </div>
           ) : (
-            <div className="table-responsive">
-              <Table hover>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Department Name</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {departments.length > 0 ? (
-                    departments.map((dept, index) => (
-                      <tr key={dept.id}>
-                        <td>{index + 1}</td>
-                        <td>{dept.name}</td>
-                        <td>
-                          <Button
-                            size="sm"
-                            variant="info"
-                            className="me-2"
-                            onClick={() => handleEditDept(dept)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteDept(dept.id)}
-                          >
-                            Delete
-                          </Button>
+            <>
+              <div className="table-responsive">
+                <Table hover>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Department Name</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {departments.length > 0 ? (
+                      departments.map((dept, index) => (
+                        <tr key={dept.id}>
+                          <td>{index + 1}</td>
+                          <td>{dept.name}</td>
+                          <td>
+                            <Button
+                              size="sm"
+                              variant="info"
+                              className="me-2"
+                              onClick={() => handleEditDept(dept)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDeleteDept(dept.id)}
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="text-center">
+                          No departments found
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="3" className="text-center">
-                        No departments found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
-            </div>
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+
+              <div className="department-mobile-list">
+                {departments.length > 0 ? (
+                  departments.map((dept, index) => (
+                    <div className="department-card" key={dept.id}>
+                      <div className="dept-field">
+                        <span className="label">Department</span>
+                        <span className="value">{dept.name}</span>
+                      </div>
+
+                      <div className="dept-actions">
+                        <Button
+                          size="sm"
+                          variant="info"
+                          className="w-100 mb-2"
+                          onClick={() => handleEditDept(dept)}
+                        >
+                          Edit
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          className="w-100"
+                          onClick={() => handleDeleteDept(dept.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center mt-3">No departments found</p>
+                )}
+              </div>
+            </>
           )}
         </Card.Body>
       </Card>
 
-      {/* Edit Department Modal  */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Department</Modal.Title>

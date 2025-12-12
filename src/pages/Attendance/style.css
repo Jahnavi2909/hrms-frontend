@@ -16,8 +16,8 @@
     display: none !important;
   }
 
-  .attendance-mobile-list .mobile-card {
-    display: block;
+  .attendance-mobile-list {
+    display: block !important;
     background: #fff;
     border-radius: 12px;
     padding: 16px;
@@ -53,5 +53,20 @@
   }
   .mobile-card .label {
     font-size: 11px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .attendance-mobile-list {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .attendance-table {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }

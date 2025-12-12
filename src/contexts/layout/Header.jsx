@@ -12,7 +12,7 @@ const Header = () => {
     const [notificationsCount, setNotificationsCount] = useState(0);
     const [loadingNotifications, setLoadingNotifications] = useState(true);
 
-     useEffect(() => {
+    useEffect(() => {
         fetchUnreadNotificationCount();
 
         const interval = setInterval(() => {
@@ -37,7 +37,7 @@ const Header = () => {
             setLoadingNotifications(false);
         }
     };
-   
+
 
     return (
         <Navbar bg="white" variant="light" className="border-bottom shadow-sm nav-bar sticky-top">
@@ -47,7 +47,7 @@ const Header = () => {
                 </Navbar.Brand>
 
                 <Nav className="ms-auto align-items-center">
-                    
+
                     {/* NOTIFICATIONS */}
                     <Link to={"/notifications"}>
                         <Nav className="position-relative p-2">
@@ -88,19 +88,19 @@ const Header = () => {
                                 <small className="text-muted">{user?.email}</small>
                             </Dropdown.Header>
                             <Dropdown.Divider />
-                            
-                                <Dropdown.Item>
-                                    <Link to={"/profile"} className="link">
-                                    <FaUserCircle className="me-2" /> Profile
-                                    </Link>
-                                </Dropdown.Item>
-                            
-                            
-                                <Dropdown.Item>
-                                    <Link to={"/settings"} className="link">
-                                    <FaCog className="me-2" /> Settings
-                                    </Link>
-                                </Dropdown.Item>
+
+                            <Dropdown.Item as={Link} to="/profile" className="link">
+
+                                <FaUserCircle className="me-2" /> Profile
+
+                            </Dropdown.Item>
+
+
+                            <Dropdown.Item as={Link} to="/settings" className="link">
+
+                                <FaCog className="me-2" /> Settings
+
+                            </Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item className="text-danger" onClick={logout}>
                                 <FaSignOutAlt className="me-2" /> Logout

@@ -46,12 +46,13 @@ const EmployeeProfile = () => {
               <img src={employee.avatar} alt="avatar" className="img-fluid" />
             ) : (
               <div className="avatar-placeholder">
-                {(employee.firstName[0] + (employee.lastName ? employee.lastName[0] : "")).toUpperCase()}
+                {`${employee?.firstName?.[0] || ""}${employee?.lastName?.[0] || ""}`.toUpperCase() || "?"}
               </div>
+
             )}
           </div>
           <div className="profile-meta">
-            <h2>{employee.name || `${employee.firstName || ""} ${employee.lastName || ""}`}</h2>
+            <h2>{employee.firstName || `${employee?.firstName || ""} ${employee.lastName || ""}`}</h2>
             <p className="text-muted">{employee.designation}</p>
             <div className="employee-meta">
               <span><FaIdCard className="me-2" /> Employee ID: {employee.employeeId || "N/A"}</span>
