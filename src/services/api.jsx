@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net";
+export const API_BASE_URL = "http://hrms-application-env.eba-z4idnv8m.ap-south-1.elasticbeanstalk.com/api/auth/signup";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
