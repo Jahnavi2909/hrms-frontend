@@ -13,14 +13,22 @@ const LeaveApplyForm = ({ refresh }) => {
   const [msg, setMsg] = useState(null);
   const [error, setError] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [dateError, setDateError] = useState(null);
+
 
   const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setDateError(null);
 
     if (!startDate || !endDate) {
-      setError("Select both dates");
+      setError("Select both From and To dates");
+      return;
+    }
+
+    if (new Date(endDate) < new Date(startDate)) {
+      setDateError("To date cannot be before From date");
       return;
     }
 
@@ -67,12 +75,24 @@ const LeaveApplyForm = ({ refresh }) => {
 
             <Form.Group className="mb-3">
               <Form.Label>From</Form.Label>
-              <Form.Control type="date" value={startDate} onChange={(e) => setFromDate(e.target.value)} />
+              <Form.Control type="date" value={startDate} min={new Date().toISOString().split("T")[0]} onChange={(e) => {
+                setFromDate(e.target.value)
+                setToDate("");
+                setDateError(null);
+              }} />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>To</Form.Label>
-              <Form.Control type="date" value={endDate} onChange={(e) => setToDate(e.target.value)} />
+              <Form.Control type="date" min={startDate || new Date().toISOString().split("T")[0]} value={endDate} onChange={(e) => {
+                setToDate(e.target.value)
+                setDateError(null);
+              }
+              } isInvalid={!!dateError}
+                required />
+              <Form.Control.Feedback type="invalid">
+                {dateError}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -82,6 +102,7 @@ const LeaveApplyForm = ({ refresh }) => {
                 rows={3}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
+                required
               />
             </Form.Group>
 
@@ -276,7 +297,7 @@ const Leaves = () => {
                 <div className="field">
                   <div className="label">Status</div>
                   <span className={`badge bg-${l.status === "APPROVED" ? "success" :
-                      l.status === "REJECTED" ? "danger" : "warning"
+                    l.status === "REJECTED" ? "danger" : "warning"
                     }`}>
                     {l.status}
                   </span>

@@ -15,7 +15,7 @@ import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
 import Department from './pages/Department';
 import Unauthorized from './pages/Unauthorized';
-import Signup from './pages/Signup';
+import ForgotPassword from './pages/Password/ForgotPassword';
 
 
 // Private Route Component
@@ -45,7 +45,7 @@ const AppLayout = ({ children }) => {
           {children}
         </main>
       </div>
-    </div>
+    </div >
   )
 }
 
@@ -55,7 +55,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           <Route path="/" element={

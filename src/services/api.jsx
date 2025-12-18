@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const API_BASE_URL = "https://d1ujpx8cjlbvx.cloudfront.net" || "http://localhost:8080";
+export const API_BASE_URL = "http://localhost:8080";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -27,7 +27,11 @@ export const authApi = {
   login: (email, password) =>
     api.post("/auth/login", { email, password }),
   signup: ({ username, email, password, role }) =>
-    api.post("/auth/signup", { username, email, password, role })
+    api.post("/auth/signup", { username, email, password, role }),
+  forgotPassword: (data) =>
+    api.post("/auth/forgot-password", data),
+  resetPassword: (data) =>
+    api.post("/auth/reset-password", data),
 };
 
 // EMPLOYEE API 
@@ -104,3 +108,4 @@ export const userApi = {
   changePassword: (data) =>
     api.put(`/api/users/change-password`, data),
 };
+

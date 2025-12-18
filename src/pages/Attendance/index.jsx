@@ -20,6 +20,14 @@ const Attendance = () => {
         return isoString.split("T")[1]?.split(".")[0] || "--:--";
     };
 
+    const formatHoursWorked = (time) => {
+        if (!time) return "00 hrs 00 min";
+
+        const [hrs, mins] = time.split(":");
+        return `${hrs} hrs ${mins} min`;
+    };
+
+
     const loadAttendance = async () => {
         try {
             let res;
@@ -139,7 +147,7 @@ const Attendance = () => {
                                                             "--:--"}
                                                     </td>
                                                     <td>
-                                                        {(record.workedTime ?? 0)}
+                                                        {(formatHoursWorked(record.workedTime) ?? 0)}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -174,7 +182,7 @@ const Attendance = () => {
 
                                             <div className="field">
                                                 <div className="label">Hours Worked</div>
-                                                <div className="value">{record.workedTime ?? 0}</div>
+                                                <div className="value">{formatHoursWorked(record.workedTime) ?? 0}</div>
                                             </div>
 
                                         </div>

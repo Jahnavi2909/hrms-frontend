@@ -59,7 +59,7 @@ const Login = () => {
                     <Card.Body className="p-4">
                         <div className="text-center mb-4">
                             <h2 className="fw-bold mb-1">Welcome Back</h2>
-                            <p className="text-muted">Sign in to your HRM account</p>
+                            <p className="text-muted">Sign in to your HRMS account</p>
                         </div>
 
                         {error && (
@@ -96,9 +96,9 @@ const Login = () => {
                             <Form.Group className="mb-4">
                                 <div className="d-flex justify-content-between">
                                     <Form.Label>Password</Form.Label>
-                                    {/* <Link to="/forgot-password" className="small">
+                                    <Link to="/forgot-password" className="small">
                                         Forgot password?
-                                    </Link> */}
+                                    </Link>
                                 </div>
                                 <div className="input-group">
                                     <span className="input-group-text">

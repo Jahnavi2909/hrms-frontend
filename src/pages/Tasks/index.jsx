@@ -99,7 +99,7 @@ const TaskCreateForm = ({ onAdd }) => {
                 <option value="">-- Select Employee --</option>
                 {employeesList.map((emp) => (
                   <option key={emp.id} value={emp.id}>
-                    {emp.firstName} {emp.lastName} ({emp.id})
+                    {emp.firstName} {emp.lastName} ({emp.employeeId})
                   </option>
                 ))}
               </Form.Select>
@@ -121,6 +121,7 @@ const TaskCreateForm = ({ onAdd }) => {
               <Form.Control
                 type="date"
                 value={dueDate}
+                min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setDueDate(e.target.value)}
               />
             </Form.Group>
@@ -304,7 +305,7 @@ const Tasks = () => {
                 <div className="field">
                   <div className="label">Status</div>
                   <span className={`badge bg-${t.status === "COMPLETED" ? "success" :
-                      t.status === "IN_PROGRESS" ? "primary" : "warning"
+                    t.status === "IN_PROGRESS" ? "primary" : "warning"
                     }`}>
                     {t.status}
                   </span>

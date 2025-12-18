@@ -115,6 +115,11 @@ const EmployeeProfile = () => {
                     <FaClock className="me-2" />
                     <div>
                       <h6>Total Working Days</h6>
+                      {
+                        () => {
+                          
+                        }
+                      }
                       <p className="mb-0">{attendance.filter(a => a.attendanceStatus === 'PRESENT' || a.attendanceStatus === 'HALF_DAY').length} days</p>
                     </div>
                   </div>

@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../services/api";
+import { authApi, notificationApi } from "../services/api";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 const AuthContext = createContext(null);
 
@@ -10,8 +12,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notifications, setNotifications] = useState([]);
 
   const navigate = useNavigate();
+
+  const stompClientRef = useRef(null);
+  const soundRef = useRef(null);
+  const isInitialLoad = useRef(true);
+  const prevUnreadCount = useRef(0);
 
   useEffect(() => {
     const savedUser = Cookies.get("user");
@@ -19,127 +27,175 @@ export const AuthProvider = ({ children }) => {
 
     if (savedUser && savedToken) {
       try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
+        setUser(JSON.parse(savedUser));
         setToken(savedToken);
-      } catch (error) {
+      } catch {
         Cookies.remove("user");
         Cookies.remove("token");
       }
     }
-
     setLoading(false);
   }, []);
-  
 
-  //login
+  useEffect(() => {
+    if (!user || !token) return;
+
+    if (!soundRef.current) {
+      soundRef.current = new Audio("/notification.mp3");
+    }
+
+    const loadNotifications = async () => {
+      try {
+        const res = await notificationApi.getAllNotifications();
+        setNotifications(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to load notifications", err);
+      } finally {
+        isInitialLoad.current = false;
+      }
+    };
+
+    const handleIncoming = (payload) => {
+      const newNotification = JSON.parse(payload.body);
+
+      setNotifications(prev => {
+
+        if (prev.some(n => n.id === newNotification.id)) return prev;
+        return [newNotification, ...prev];
+      });
+    };
+
+    const connectWebSocket = () => {
+      const stomp = new Client({
+        webSocketFactory: () =>
+          new SockJS(`http://localhost:8080/ws?access_token=${token}`),
+        reconnectDelay: 5000,
+      });
+
+      stomp.onConnect = () => {
+        console.log("🔌 WebSocket connected");
+
+        stomp.subscribe("/user/queue/notifications", handleIncoming);
+        stomp.subscribe(`/topic/notifications/${user.role}`, handleIncoming);
+      };
+
+      stomp.onStompError = (frame) => {
+        console.error("Broker error", frame);
+      };
+
+      stomp.activate();
+      stompClientRef.current = stomp;
+    };
+
+    loadNotifications();
+    connectWebSocket();
+
+    return () => {
+      stompClientRef.current?.deactivate();
+    };
+  }, [user, token]);
+
+
+  useEffect(() => {
+    const unreadCount = notifications.filter(n => !n.read).length;
+
+    if (
+      !isInitialLoad.current &&
+      unreadCount > prevUnreadCount.current
+    ) {
+      soundRef.current?.play().catch(() => { });
+    }
+
+    prevUnreadCount.current = unreadCount;
+  }, [notifications]);
+
+
   const login = async (email, password) => {
     try {
       setError("");
+      const res = await authApi.login(email, password);
 
-      const response = await authApi.login(email, password);
-
-      console.log("Login response:", response);
-
-      if (response.data && response.data.data) {
-        const { token, ...userData } = response.data.data;
-
-        let finalUserData = { ...userData };
-        if (!finalUserData.role) {
-          finalUserData.role = "ROLE_EMPLOYEE";
-        }
-
-        Cookies.set("token", token, { expires: 7 });
-        Cookies.set("user", JSON.stringify(finalUserData), { expires: 7 });
-
-        setUser(finalUserData);
-        setToken(token);
-
-        return { success: true };
-      }
-
-      return {
-        success: false,
-        message: response.data?.message || "Login failed. Please try again.",
+      const { token, ...userData } = res.data.data;
+      const finalUser = {
+        ...userData,
+        role: userData.role || "ROLE_EMPLOYEE",
       };
-    } catch (error) {
-      console.error("Login error:", error);
 
-      const errorMessage =
-        error.response?.data?.message ||
-        "Login failed. Please check your credentials";
+      Cookies.set("token", token, { expires: 7 });
+      Cookies.set("user", JSON.stringify(finalUser), { expires: 7 });
 
-      setError(errorMessage);
+      setUser(finalUser);
+      setToken(token);
 
-      return {
-        success: false,
-        message: errorMessage,
-      };
+      return { success: true };
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Login failed";
+      setError(msg);
+      return { success: false, message: msg };
     }
   };
-
-  //signup
-  const signup = async ({ username, email, password, role, secretKey }) => {
-    try {
-      setError("");
-
-
-      if (["ADMIN", "HR", "MANAGER"].includes(role?.toUpperCase()) && secretKey !== process.env.REACT_APP_ADMIN_SECRET) {
-        return { success: false, message: "Unauthorized role creation" };
-      }
-
-      const response = await authApi.signup({ username, email, password, role });
-
-      if (response.data && response.data.data) {
-        return {
-          success: true,
-          message: response.data.message || "Signup successful! Please login."
-        };
-      }
-
-      return {
-        success: false,
-        message: response.data?.message || "Signup failed. Please try again."
-      };
-
-    } catch (error) {
-      console.error("Signup error:", error);
-      const errorMessage = error.response?.data?.message || "Signup failed. Please try again.";
-      setError(errorMessage);
-      return { success: false, message: errorMessage };
-    }
-  };
-
-  // Logout 
 
   const logout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
     setUser(null);
     setToken(null);
+    setNotifications([]);
     navigate("/login");
   };
 
-  const value = {
-    user,
-    loading,
-    error,
-    token,
-    isAuthenticated: !!user,
-    login,
-    signup,
-    logout
+  const markAsRead = async (id) => {
+    try {
+      await notificationApi.markAsRead(id);
+      setNotifications(prev =>
+        prev.map(n =>
+          n.id === id ? { ...n, read: true } : n
+        )
+      );
+    } catch (err) {
+      console.error("Mark read failed", err);
+    }
   };
 
+  const deleteNotification = async (id) => {
+    try {
+      await notificationApi.deleteNotification(id);
+      setNotifications(prev =>
+        prev.filter(n => n.id !== id)
+      );
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        error,
+        notifications,
+        unreadCount,
+        login,
+        logout,
+        markAsRead,
+        deleteNotification,
+        setNotifications,
+      }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+  return ctx;
 };
