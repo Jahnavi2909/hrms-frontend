@@ -1,7 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+<<<<<<< HEAD
 export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net" || "http://localhost:8080";
+=======
+export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net";
+>>>>>>> 6588fdab40f88c55bd851c56202d581ccb646775
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -108,4 +112,7 @@ export const userApi = {
   changePassword: (data) =>
     api.put(`/api/users/change-password`, data),
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6588fdab40f88c55bd851c56202d581ccb646775
