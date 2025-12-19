@@ -109,7 +109,3 @@ export const userApi = {
   changePassword: (data) =>
     api.put(`/api/users/change-password`, data),
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 6588fdab40f88c55bd851c56202d581ccb646775
