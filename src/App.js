@@ -49,6 +49,8 @@ const AppLayout = ({ children }) => {
   )
 }
 
+// Main App Component
+
 function App() {
   return (
     <BrowserRouter>
