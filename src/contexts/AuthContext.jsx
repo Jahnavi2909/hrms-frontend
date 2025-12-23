@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { authApi, notificationApi } from "../services/api";
+import { API_BASE_URL, authApi, notificationApi } from "../services/api";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     const connectWebSocket = () => {
       const stomp = new Client({
         webSocketFactory: () =>
-          new SockJS(`http://localhost:8080/ws?access_token=${token}`),
+          new SockJS(`${API_BASE_URL}/ws?access_token=${token}`),
         reconnectDelay: 5000,
       });
 
