@@ -1,3 +1,4 @@
+
 name: Deploy Frontend to S3 and CloudFront
 
 on:
@@ -45,7 +46,7 @@ jobs:
         run: aws sts get-caller-identity || true
 
       - name: Deploy to S3
-        run: aws s3 sync build/ s3://hrmsportals --delete
+        run: aws s3 sync build/ s3://hrmsportals  --delete
 
       - name: Invalidate CloudFront Cache (conditional)
         env:
