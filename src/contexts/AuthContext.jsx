@@ -99,11 +99,8 @@ export const AuthProvider = ({ children }) => {
     const connectWebSocket = () => {
       const stomp = new Client({
         webSocketFactory: () =>
-<<<<<<< HEAD
           new SockJS(`${API_BASE_URL}/ws?access_token=${token}`),
-=======
           new SockJS(`https://d3qs09ype2r7pk.cloudfront.net/ws?access_token=${token}`),
->>>>>>> 9fb6ceeb9d85c76cf57e8bd6b2a601fb00b8e60c
         reconnectDelay: 5000,
       });
 
