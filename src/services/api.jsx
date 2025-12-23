@@ -143,7 +143,6 @@ export const userApi = {
   changePassword: (data) =>
     api.put(`/api/users/change-password`, data),
 };
-<<<<<<< HEAD
 
 export const payrollApi = {
   generate: (employeeId, year, month) =>
@@ -162,5 +161,3 @@ export const payrollApi = {
       responseType: "blob",
     }),
 };
-=======
->>>>>>> 9fb6ceeb9d85c76cf57e8bd6b2a601fb00b8e60c
