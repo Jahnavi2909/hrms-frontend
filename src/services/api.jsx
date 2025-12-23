@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net";
-
+export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net" //my cloudfront url
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -23,6 +22,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+
+      Cookies.remove("token");
+      Cookies.remove("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+
 //  AUTH API 
 export const authApi = {
   login: (email, password) =>
@@ -42,6 +57,12 @@ export const employeeApi = {
   create: (data) => api.post("/api/employees", data),
   update: (id, data) => api.put(`/api/employees/${id}`, data),
   delete: (id) => api.delete(`/api/employees/${id}`),
+  getEmployeeByDepartment: (id) => api.get(`/api/employees/department/${id}`),
+  uploadAvatar: (id, data) => api.post(`/api/employees/${id}/avatar`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }),
 };
 
 export const departmentApi = {
@@ -61,6 +82,19 @@ export const attendanceApi = {
   getAttendanceHistory: (employeeId) => api.get(`/api/attendance/history/${employeeId}`),
   getMonthlyAttendance: (employeeId, year, month) =>
     api.get(`/api/attendance/monthly/${employeeId}`, { params: { year, month } }),
+  getWeeklyTimeline(employeeId, weekStart) {
+    const params = { weekStart };
+    if (employeeId) params.employeeId = employeeId;
+    return api.get("/api/attendance/weekly", { params });
+  },
+  getAttendanceByDateWithFallback: (date, employeeId) =>
+    api.get("/attendance/by-date-fallback", {
+      params: { date, employeeId }
+    }),
+
+
+
+
 };
 
 // TASK API 
@@ -109,3 +143,24 @@ export const userApi = {
   changePassword: (data) =>
     api.put(`/api/users/change-password`, data),
 };
+<<<<<<< HEAD
+
+export const payrollApi = {
+  generate: (employeeId, year, month) =>
+    api.post(`/api/payroll/generate`, null, {
+      params: { employeeId, year, month },
+    }),
+
+  lock: (payrollId) =>
+    api.post(`/api/payroll/${payrollId}/lock`),
+
+  getByMonth: (year, month) =>
+    api.get(`/api/payroll/month`, { params: { year, month } }),
+
+  downloadPayslip: (payrollId) =>
+    api.get(`/api/payroll/${payrollId}/payslip`, {
+      responseType: "blob",
+    }),
+};
+=======
+>>>>>>> 9fb6ceeb9d85c76cf57e8bd6b2a601fb00b8e60c

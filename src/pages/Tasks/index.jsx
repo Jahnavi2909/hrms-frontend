@@ -4,6 +4,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
 import { taskApi, employeeApi } from "../../services/api";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const TaskCreateForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
@@ -156,6 +157,7 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [dateFilter, setDateFilter] = useState(new Date().toISOString().split("T")[0]);
   const [message, setMessage] = useState(null);
+   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
@@ -244,7 +246,7 @@ const Tasks = () => {
               </thead>
               <tbody>
                 {visibleTasks.length > 0 ? visibleTasks.map((t) => (
-                  <tr key={t.id}>
+                  <tr key={t.id} onClick={() => navigate(`/employee/${t.assignedToEmployeeId}/tasks`)}>
                     {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER" || "ROLE_HR") && (
                       <td>
                         <strong>{t.assignedToEmployeeName}</strong><br />
@@ -289,7 +291,7 @@ const Tasks = () => {
 
           <div className="task-mobile-list">
             {visibleTasks.map((t) => (
-              <div className="task-card" key={t.id}>
+              <div className="task-card" key={t.id} onClick={() => navigate(`/employee/${t.assignedToEmployeeId}/tasks`)}>
                 {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
                   <div className="field">
                     <div className="label">Employee</div>

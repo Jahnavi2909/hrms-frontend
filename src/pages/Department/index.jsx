@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, Table, Form, Button, Alert, Modal, Spinner } from "react-bootstrap";
 import { departmentApi } from "../../services/api";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const Department = () => {
   const [departments, setDepartments] = useState([]);
@@ -9,6 +10,7 @@ const Department = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigate();
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingDept, setEditingDept] = useState(null);
@@ -148,7 +150,7 @@ const Department = () => {
                   <tbody>
                     {departments.length > 0 ? (
                       departments.map((dept, index) => (
-                        <tr key={dept.id}>
+                        <tr key={dept.id} onClick={() => navigation(`/department/${dept.id}/employees`)}>
                           <td>{index + 1}</td>
                           <td>{dept.name}</td>
                           <td>
@@ -184,7 +186,7 @@ const Department = () => {
               <div className="department-mobile-list">
                 {departments.length > 0 ? (
                   departments.map((dept, index) => (
-                    <div className="department-card" key={dept.id}>
+                    <div className="department-card" key={dept.id} onClick={() => navigation(`/department/${dept.id}/employees`)}>
                       <div className="dept-field">
                         <span className="label">Department</span>
                         <span className="value">{dept.name}</span>
