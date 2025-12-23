@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import {
   FaCalendarAlt, FaChartLine, FaUsers, FaUserTie, FaEdit, FaTrash, FaUserPlus
 } from "react-icons/fa";
-import { API_BASE_URL, attendanceApi, employeeApi, leaveApi } from "../../services/api";
+import { API_BASE_URL, attendanceApi, employeeApi, leaveApi, taskApi } from "../../services/api";
 import EmployeeForm from "../Employee/EmployeeForm";
 import "./style.css";
 import useAutoCheckout from "../../contexts/layout/AutoCheckout";
@@ -29,14 +29,24 @@ const Dashboard = () => {
   });
 
   const [employeeDashboard, setEmployeeDashboard] = useState({
-    checkIn: null, checkOut: null, leaveUsed: 0, leaveTotal: 0
+    checkIn: null,
+    checkOut: null,
+    leaveUsed: 0,
+    leaveRemaining: 0,
+    leaveTotal: 0,
+    leaveApproved: 0,
+    leaveRejected: 0
   });
+
+  const [todayTasks, setTodayTasks] = useState([]);
+
+
 
   const [employees, setEmployees] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
 
-   useAutoCheckout();
+  useAutoCheckout();
 
   useEffect(() => {
     if (!user) return;
@@ -79,6 +89,33 @@ const Dashboard = () => {
   }, [employeeDashboard.checkIn, employeeDashboard.checkOut]);
 
 
+  const calculateLeaveStats = (leaves = [], totalLeaves = 20) => {
+    let approved = 0;
+    let rejected = 0;
+    let pending = 0;
+
+    leaves.forEach(leave => {
+      if (leave.status === "APPROVED") {
+        approved += leave.days;
+      } else if (leave.status === "REJECTED") {
+        rejected += leave.days;
+      } else if (leave.status === "PENDING") {
+        pending += leave.days;
+      }
+    });
+
+    return {
+      approved,
+      rejected,
+      pending,
+      used: approved,
+      remaining: Math.max(totalLeaves - approved, 0),
+      total: totalLeaves
+    };
+  };
+
+
+
 
   // Admin or HR Dashboard
 
@@ -108,7 +145,6 @@ const Dashboard = () => {
   };
 
   // Employee or Manager or Admin own dashboard
-
   const loadEmployeeDashboard = async () => {
     try {
       const employeeId = user.employeeId;
@@ -116,22 +152,38 @@ const Dashboard = () => {
 
       const attendanceRes = await attendanceApi.getTodayAttendanceByEmployee(employeeId);
       const leaveRes = await leaveApi.getByEmployee(employeeId);
+      const taskRes = await taskApi.getByEmployee(employeeId); // 👈 ADD THIS
 
       const today = attendanceRes.data?.data;
-      const leave = leaveRes.data?.data;
+      const leaves = leaveRes.data?.data || [];
+      const tasks = taskRes.data?.data || [];
+
+      // ---- TODAY FILTER ----
+      const todayDate = new Date().toISOString().split("T")[0];
+      const todayTaskList = tasks.filter(
+        task => task.dueDate === todayDate
+      );
+
+      setTodayTasks(todayTaskList);
+
+      const leaveStats = calculateLeaveStats(leaves, 20);
 
       setEmployeeDashboard({
         checkIn: today?.checkInTime || null,
         checkOut: today?.checkOutTime || null,
-        leaveUsed: leave?.used || 0,
-        leaveTotal: leave?.total || 20
+        leaveUsed: leaveStats.used,
+        leaveRemaining: leaveStats.remaining,
+        leaveTotal: leaveStats.total,
+        leaveApproved: leaveStats.approved,
+        leaveRejected: leaveStats.rejected
       });
+
     } catch (err) {
       console.error("Employee Dashboard Error:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
-
 
   // Check-in / Check-out (only for logged-in user)
 
@@ -456,15 +508,15 @@ const Dashboard = () => {
   // Employee View
 
   const renderEmployeeView = () => (
-    <div className="employee-dashboard">
+    <div className="employee-dashboard fade-in">
       <Row>
-        <Col md={8}>
-          <Card className="attendance-card mb-4">
+        <Col md={4}>
+          <Card className="attendance-card mb-4 animated-card">
             <Card.Body className="text-center">
 
               <h6 className="text-muted mb-1">Today's Work Duration</h6>
 
-              <div className="work-timer">
+              <div className="work-timer pulse">
                 {employeeDashboard.checkIn ? workTimer : "00:00:00"}
               </div>
 
@@ -506,6 +558,49 @@ const Dashboard = () => {
         </Col>
 
         <Col md={4}>
+          <Link to={'/tasks'} className="link">
+            <Card className="mb-4 shadow-sm animated-card">
+              <Card.Body>
+                <h6 className="text-muted mb-3">Today’s Tasks</h6>
+
+                {todayTasks.length === 0 ? (
+                  <div className="text-muted text-center small">
+                    You don’t have any tasks today 🎉
+                  </div>
+                ) : (
+                  <ul className="list-unstyled mb-0">
+                    {todayTasks.map(task => (
+                      <li
+                        key={task.id}
+                        className="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light"
+                      >
+                        <div>
+                          <div className="fw-semibold">{task.title}</div>
+                          <small className="text-muted">
+                            Priority: {task.priority}
+                          </small>
+                        </div>
+
+                        <span
+                          className={`badge ${task.status === "COMPLETED"
+                            ? "bg-success"
+                            : "bg-warning text-dark"
+                            }`}
+                        >
+                          {task.status}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Card.Body>
+            </Card>
+          </Link>
+        </Col>
+
+
+
+        <Col md={4}>
           <Card>
             <Card.Body>
               <h5>Quick Links</h5>
@@ -514,6 +609,104 @@ const Dashboard = () => {
               </Button>
             </Card.Body>
           </Card>
+        </Col>
+      </Row>
+      <Row>
+
+        <Col md={4} >
+          <Card className="mb-4 shadow-sm animated-card">
+            <Card.Body>
+              <h6 className="text-muted">Today Summary</h6>
+
+              <div className="d-flex justify-content-between mt-2">
+                <span>Status</span>
+                <span className="fw-bold text-success">
+                  {employeeDashboard.checkIn ? "PRESENT" : "NOT CHECKED IN"}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between">
+                <span>Check In</span>
+                <span>
+                  {employeeDashboard.checkIn
+                    ? new Date(employeeDashboard.checkIn).toLocaleTimeString()
+                    : "--"}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between">
+                <span>Worked Time</span>
+                <span className="fw-semibold">{workTimer}</span>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4} >
+          <Card className="mb-4 shadow-sm animated-card">
+            <Card.Body>
+              <h6 className="text-muted">Leave Balance</h6>
+
+              <div className="mt-2">
+                <div className="d-flex justify-content-between">
+                  <span>Used</span>
+                  <strong>{employeeDashboard.leaveUsed}</strong>
+                </div>
+
+                <div className="d-flex justify-content-between">
+                  <span>Remaining</span>
+                  <strong>{employeeDashboard.leaveRemaining}</strong>
+                </div>
+
+                <div className="d-flex justify-content-between">
+                  <span>Total</span>
+                  <strong>{employeeDashboard.leaveTotal}</strong>
+                </div>
+              </div>
+
+              <Button
+                className="w-100 mt-3"
+                variant="outline-primary"
+                onClick={() => navigate("/leaves")}
+              >
+                Apply Leave
+              </Button>
+            </Card.Body>
+          </Card>
+
+          <hr />
+
+          <div className="d-flex justify-content-between small text-muted">
+            <span>Approved</span>
+            <span className="text-success fw-semibold">
+              {employeeDashboard.leaveApproved}
+            </span>
+          </div>
+
+          <div className="d-flex justify-content-between small text-muted">
+            <span>Rejected</span>
+            <span className="text-danger fw-semibold">
+              {employeeDashboard.leaveRejected}
+            </span>
+          </div>
+
+
+        </Col>
+        <Col>
+          <Card className="shadow-sm animated-card">
+            <Card.Body>
+              <h6 className="text-muted">Quick Actions</h6>
+
+              <div className="d-grid gap-2 mt-3">
+                <Button variant="outline-secondary" onClick={() => navigate("/attendance")}>
+                  <FaCalendarAlt className="me-2" /> My Attendance
+                </Button>
+                <Button variant="outline-secondary" onClick={() => navigate("/leaves")}>
+                  Leave History
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+
         </Col>
       </Row>
     </div>
