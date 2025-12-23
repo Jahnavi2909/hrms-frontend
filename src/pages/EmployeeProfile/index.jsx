@@ -1,10 +1,14 @@
-import { Card, Col, Row, Tab, Tabs } from "react-bootstrap";
-import { FaCalendarAlt, FaClock, FaEnvelope, FaIdCard, FaMapMarkerAlt, FaPhone, FaUser, FaUserTag, FaUserTie } from "react-icons/fa";
-import { attendanceApi, employeeApi } from "../../services/api";
-import { useEffect, useState } from "react";
+import { Card, Col, ProgressBar, Row, Tab, Tabs } from "react-bootstrap";
+import { FaCalendarAlt, FaCamera, FaClock, FaEnvelope, FaIdCard, FaMapMarkerAlt, FaPhone, FaUser, FaUserTag, FaUserTie } from "react-icons/fa";
+import { API_BASE_URL, attendanceApi, employeeApi } from "../../services/api";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./style.css";
+
+
+
+const SHIFT_HOURS = 8;
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -12,11 +16,17 @@ const EmployeeProfile = () => {
   const [error, setError] = useState("");
   const [employee, setEmployee] = useState({});
   const [attendance, setAttendance] = useState([]);
+  const [forceReload, setForceReload] = useState(false);
+  const [liveWorked, setLiveWorked] = useState({});
+  const [uploading, setUploading] = useState(false);
+
+  const fileInputRef = useRef(null);
+
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
-        const response = await employeeApi.getById(user.employeeId || id);
+        const response = await employeeApi.getById(id || user.employeeId);
         setEmployee(response.data.data);
 
         const attendanceRes = await attendanceApi.getAttendanceHistory(user.employeeId || id);
@@ -29,9 +39,81 @@ const EmployeeProfile = () => {
     fetchEmployeeData();
   }, [id, user.employeeId]);
 
-  const formatTime = (isoString) => {
-    if (!isoString) return "--:--";
-    return isoString.split("T")[1]?.split(".")[0] || "--:--";
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const updated = {};
+      attendance.forEach(r => {
+        if (r.checkInTime && !r.checkOutTime) {
+          const start = new Date(r.checkInTime);
+          const now = new Date();
+          const mins = Math.floor((now - start) / 60000);
+          const h = String(Math.floor(mins / 60)).padStart(2, "0");
+          const m = String(mins % 60).padStart(2, "0");
+          updated[r.id] = `${h}:${m}`;
+        }
+      });
+      setLiveWorked(updated);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [attendance]);
+
+  /* ---------------- AUTO REFRESH ---------------- */
+
+  useEffect(() => {
+    const h = () => setForceReload(p => !p);
+    window.addEventListener("attendance-updated", h);
+    return () => window.removeEventListener("attendance-updated", h);
+  }, []);
+
+  const formatTime = (iso) => {
+    if (!iso) return "--:--";
+    return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const formatHoursWorked = (time) => {
+    if (!time) return "00 hrs 00 min";
+    const [h, m] = time.split(":").map(Number);
+    return `${String(h).padStart(2, "0")} hrs ${String(m).padStart(2, "0")} min`;
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current.click();
+  };
+
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      setUploading(true);
+      const res = await employeeApi.uploadAvatar(id || user.employeeId, formData);
+      setEmployee(prev => ({ ...prev, avatar: res.data.data.avatar }));
+    } catch (err) {
+      alert("Failed to upload image");
+      setUploading(false);
+    }
+  };
+
+
+  const Timeline = ({ rec }) => {
+    const worked = rec.checkOutTime ? rec.workedTime : liveWorked[rec.id];
+    const hoursWorked = worked ? parseInt(worked.split(":")[0]) : 0;
+    const percent = Math.min((hoursWorked / SHIFT_HOURS) * 100, 100);
+
+    return (
+      <div className="mt-1">
+        <small className="text-muted">
+          {formatTime(rec.checkInTime)} → {rec.checkOutTime ? formatTime(rec.checkOutTime) : "Now"}
+        </small>
+        <ProgressBar now={percent} variant={percent < 50 ? "danger" : "success"} />
+      </div>
+    );
   };
 
   return (
@@ -41,15 +123,52 @@ const EmployeeProfile = () => {
       <div className="profile-header">
         <div className="profile-cover"></div>
         <div className="profile-info">
-          <div className="profile-avatar">
+          <div className="profile-avatar d-flex flex-column avatar" onClick={handleAvatarClick}>
             {employee.avatar ? (
-              <img src={employee.avatar} alt="avatar" className="img-fluid" />
-            ) : (
-              <div className="avatar-placeholder">
-                {`${employee?.firstName?.[0] || ""}${employee?.lastName?.[0] || ""}`.toUpperCase() || "?"}
+              <div className="d-flex align-items-center gap-2">
+                <img
+                  src={
+                    employee.avatar
+                      ? `${API_BASE_URL}${employee.avatar}`
+                      : "/profile.jpg"
+                  }
+                  alt="Avatar"
+                  style={{width:"100%", height:"100%"}}
+                  onError={(e) => {
+                    e.currentTarget.src = "/profile.jpg";
+                  }}
+                />
+                {employee.avatar && (
+                  <button
+                    className="btn btn-danger btn-sm ms-2"
+                  // onClick={handleDeleteAvatar}
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
 
+
+
+
+            ) : (
+              <div className="avatar-placeholder">
+                {`${employee?.firstName?.[0] || ""}${employee?.lastName?.[0] || ""}`.toUpperCase()}
+              </div>
             )}
+
+            <div className="avatar-overlay">
+              <FaCamera />
+              <span>{uploading ? "Uploading..." : "Change"}</span>
+            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              hidden
+              onChange={handleAvatarUpload}
+            />
           </div>
           <div className="profile-meta">
             <h2>{employee.firstName || `${employee?.firstName || ""} ${employee.lastName || ""}`}</h2>
@@ -117,7 +236,7 @@ const EmployeeProfile = () => {
                       <h6>Total Working Days</h6>
                       {
                         () => {
-                          
+
                         }
                       }
                       <p className="mb-0">{attendance.filter(a => a.attendanceStatus === 'PRESENT' || a.attendanceStatus === 'HALF_DAY').length} days</p>
@@ -157,7 +276,16 @@ const EmployeeProfile = () => {
                           </td>
                           <td>{formatTime(record.checkInTime)}</td>
                           <td>{formatTime(record.checkOutTime)}</td>
-                          <td>{record.hoursWorked || '--'}</td>
+                          <td>
+                            <div className="field">
+                              <div className="value">
+                                {record.checkOutTime
+                                  ? formatHoursWorked(record.workedTime)
+                                  : formatHoursWorked(liveWorked[record.id])}
+                              </div>
+                              <Timeline rec={record} />
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

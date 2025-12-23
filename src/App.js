@@ -16,6 +16,10 @@ import Notifications from './pages/Notifications';
 import Department from './pages/Department';
 import Unauthorized from './pages/Unauthorized';
 import ForgotPassword from './pages/Password/ForgotPassword';
+import Payroll from './pages/Payroll';
+import AttendanceHistory from './pages/AttendanceHistory';
+import TaskHistory from './pages/TaskHistory';
+import EODHistory from './pages/EodHistoriry';
 
 
 // Private Route Component
@@ -65,6 +69,7 @@ function App() {
               </AppLayout>
             </PrivateRoute>
           } />
+
           <Route path="/attendance" element={
             <PrivateRoute>
               <AppLayout>
@@ -72,7 +77,13 @@ function App() {
               </AppLayout>
             </PrivateRoute>
           } />
-
+          <Route path="/employee/:id/monthly-attendance" element={
+            <PrivateRoute>
+              <AppLayout>
+                <AttendanceHistory />
+              </AppLayout>
+            </PrivateRoute>
+          } />
           <Route path="employees/:id" element={
             <PrivateRoute>
               <AppLayout>
@@ -82,6 +93,13 @@ function App() {
           } />
 
           <Route path="/employees" element={
+            <PrivateRoute>
+              <AppLayout>
+                <Employee />
+              </AppLayout>
+            </PrivateRoute>
+          } />
+          <Route path="/department/:id/employees" element={
             <PrivateRoute>
               <AppLayout>
                 <Employee />
@@ -102,10 +120,26 @@ function App() {
               </AppLayout>
             </PrivateRoute>
           } />
+
+          <Route path="/employee/:id/tasks" element={
+            <PrivateRoute>
+              <AppLayout>
+                <TaskHistory />
+              </AppLayout>
+            </PrivateRoute>
+          } />
           <Route path="/eod-report" element={
             <PrivateRoute>
               <AppLayout>
                 <EndOfTheDayReport />
+              </AppLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/employee/:id/eod-report" element={
+            <PrivateRoute>
+              <AppLayout>
+                <EODHistory />
               </AppLayout>
             </PrivateRoute>
           } />
@@ -134,6 +168,13 @@ function App() {
             <PrivateRoute>
               <AppLayout>
                 <EmployeeProfile />
+              </AppLayout>
+            </PrivateRoute>
+          } />
+          <Route path="/payroll" element={
+            <PrivateRoute>
+              <AppLayout>
+                <Payroll />
               </AppLayout>
             </PrivateRoute>
           } />

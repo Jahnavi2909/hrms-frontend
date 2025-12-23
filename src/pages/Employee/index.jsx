@@ -2,27 +2,38 @@ import { useState, useEffect } from "react";
 import { Button, Card, Container, Table, Form, Collapse } from "react-bootstrap";
 import { FaEdit, FaTrash, FaUserPlus } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
-import { employeeApi } from "../../services/api";
+import { API_BASE_URL, employeeApi } from "../../services/api";
 import EmployeeForm from "./EmployeeForm"; // import form component
 import "./style.css";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Employee = () => {
     const { user } = useAuth();
+    const { id } = useParams();
     const isAdminOrHr = ['ROLE_ADMIN', 'ROLE_HR', "ROLE_MANAGER"].includes(user?.role);
 
     const [employees, setEmployees] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [openForm, setOpenForm] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchEmployees();
-    }, []);
+    }, [id]);
 
     const fetchEmployees = async () => {
         try {
-            const response = await employeeApi.getAllEmployee();
-            if (response.data?.data) setEmployees(response.data.data);
+            let response;
+
+            if (id) {
+                response = await employeeApi.getEmployeeByDepartment(id);
+            } else {
+                response = await employeeApi.getAllEmployee();
+            }
+            if (response.data?.data) {
+                setEmployees(response.data.data);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -108,8 +119,30 @@ const Employee = () => {
                             <tbody>
                                 {filteredEmployees.length ? (
                                     filteredEmployees.map(emp => (
-                                        <tr key={emp.id}>
-                                            <td>{emp.firstName} {emp.lastName} <br /><small className="text-muted">{emp.email}</small></td>
+                                        <tr key={emp.id}
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() => navigate(`/employees/${emp.id}`)}>
+                                            <td>
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <img
+                                                        src={
+                                                            emp.avatar
+                                                                ? `${API_BASE_URL}${emp.avatar}`
+                                                                : "/profile.jpg"
+                                                        }
+                                                        alt="Avatar"
+                                                        style={{width:"60px", height:"60px", borderRadius: "50%", objectFit: "cover", marginRight: "10px"}}
+                                                    />
+
+                                                    <div className="employee-text">
+                                                        <div className="name">
+                                                            {emp.firstName} {emp.lastName}
+                                                        </div>
+                                                        <small className="email">{emp.email}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+
                                             <td>{emp.designation}</td>
                                             <td>{emp.departmentName}</td>
                                             <td>{emp.status || "ACTIVE"}</td>
@@ -145,9 +178,10 @@ const Employee = () => {
                     <div className="mobile-list d-md-none">
                         {filteredEmployees.length ? (
                             filteredEmployees.map(emp => (
-                                <div className="mobile-card" key={emp.id}>
+                                <div className="mobile-card" key={emp.id} onClick={() => navigate(`/employees/${emp.id}`)}>
 
                                     <div className="field">
+                                        <img src={emp.avatarUrl || "/profile.jpg"} alt="Avatar" className="avatar mb-2" />
                                         <div className="label">Employee</div>
                                         <div className="value">{emp.firstName} {emp.lastName}</div>
                                         <div className="value text-muted" style={{ fontSize: "12px" }}>{emp.email}</div>

@@ -5,20 +5,23 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   FaCalendarAlt, FaChartLine, FaUsers, FaUserTie, FaEdit, FaTrash, FaUserPlus
 } from "react-icons/fa";
-import { attendanceApi, employeeApi, leaveApi } from "../../services/api";
+import { API_BASE_URL, attendanceApi, employeeApi, leaveApi } from "../../services/api";
 import EmployeeForm from "../Employee/EmployeeForm";
 import "./style.css";
+import useAutoCheckout from "../../contexts/layout/AutoCheckout";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isAdminOrHr = ["ROLE_ADMIN", "ROLE_HR"].includes(user?.role);
   const canCheckAttendance = ["ROLE_ADMIN", "ROLE_HR", "ROLE_MANAGER", "ROLE_EMPLOYEE"].includes(user?.role);
+  const [workTimer, setWorkTimer] = useState("00:00:00");
+
 
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -32,7 +35,9 @@ const Dashboard = () => {
   const [employees, setEmployees] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
- 
+
+   useAutoCheckout();
+
   useEffect(() => {
     if (!user) return;
     if (isAdminOrHr) loadAdminDashboard();
@@ -40,8 +45,43 @@ const Dashboard = () => {
   }, [user]);
 
 
+  useEffect(() => {
+    let interval;
+
+    if (employeeDashboard.checkIn && !employeeDashboard.checkOut) {
+      const checkInTime = new Date(employeeDashboard.checkIn);
+
+      interval = setInterval(() => {
+        const now = new Date();
+        const diff = now - checkInTime;
+
+        const hours = String(Math.floor(diff / 3600000)).padStart(2, "0");
+        const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+        const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+
+        setWorkTimer(`${hours}:${minutes}:${seconds}`);
+      }, 1000);
+    }
+
+    if (employeeDashboard.checkOut) {
+      const checkIn = new Date(employeeDashboard.checkIn);
+      const checkOut = new Date(employeeDashboard.checkOut);
+      const diff = checkOut - checkIn;
+
+      const hours = String(Math.floor(diff / 3600000)).padStart(2, "0");
+      const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+      const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+
+      setWorkTimer(`${hours}:${minutes}:${seconds}`);
+    }
+
+    return () => clearInterval(interval);
+  }, [employeeDashboard.checkIn, employeeDashboard.checkOut]);
+
+
+
   // Admin or HR Dashboard
-  
+
   const loadAdminDashboard = async () => {
     try {
       const [empRes, todayRes] = await Promise.all([
@@ -68,7 +108,7 @@ const Dashboard = () => {
   };
 
   // Employee or Manager or Admin own dashboard
-  
+
   const loadEmployeeDashboard = async () => {
     try {
       const employeeId = user.employeeId;
@@ -94,7 +134,7 @@ const Dashboard = () => {
 
 
   // Check-in / Check-out (only for logged-in user)
- 
+
   const handleCheckIn = async () => {
     try {
       await attendanceApi.checkIn(user.employeeId);
@@ -117,9 +157,9 @@ const Dashboard = () => {
     }
   };
 
- 
+
   // Handle Edit or Delete Employee
- 
+
   const handleEditEmployee = (employee) => {
     setEditingEmployee(employee);
     setOpenForm(true);
@@ -137,29 +177,56 @@ const Dashboard = () => {
     }
   };
 
-  
+
   // Admin or HR View
-  
+
   const renderAdminView = () => (
     <>
       {canCheckAttendance && (
-        <Card className="mb-4">
-          <Card.Body>
-            <h6>Your Attendance</h6>
-            <p>{employeeDashboard.checkIn ? `Checked in at: ${employeeDashboard.checkIn}` : "Not checked in yet"}</p>
-            <p>{employeeDashboard.checkOut ? `Checked out at: ${employeeDashboard.checkOut}` : ""}</p>
+        <Card className="attendance-card mb-4">
+          <Card.Body className="text-center">
 
-            {!employeeDashboard.checkIn && (
-              <Button className="me-2" onClick={handleCheckIn}>✔ Check In</Button>
+            <h6 className="text-muted mb-1">Today's Work Duration</h6>
+
+            <div className="work-timer">
+              {employeeDashboard.checkIn ? workTimer : "00:00:00"}
+            </div>
+
+            <div className="mt-2 text-muted small">
+              {employeeDashboard.checkIn
+                ? `Checked in at ${new Date(employeeDashboard.checkIn).toLocaleTimeString()}`
+                : "You haven't checked in yet"}
+            </div>
+
+            {employeeDashboard.checkOut && (
+              <div className="text-muted small">
+                Checked out at {new Date(employeeDashboard.checkOut).toLocaleTimeString()}
+              </div>
             )}
-            {employeeDashboard.checkIn && !employeeDashboard.checkOut && (
-              <Button variant="danger" className="me-2" onClick={handleCheckOut}>⛔ Check Out</Button>
-            )}
-            {employeeDashboard.checkIn && employeeDashboard.checkOut && (
-              <span className="text-success">✔ Attendance completed for today</span>
-            )}
+
+            <div className="mt-4 d-flex justify-content-center gap-3">
+              {!employeeDashboard.checkIn && (
+                <Button className="check-btn check-in" onClick={handleCheckIn}>
+                  ✔ Check In
+                </Button>
+              )}
+
+              {employeeDashboard.checkIn && !employeeDashboard.checkOut && (
+                <Button className="check-btn check-out" onClick={handleCheckOut}>
+                  ⛔ Check Out
+                </Button>
+              )}
+
+              {employeeDashboard.checkIn && employeeDashboard.checkOut && (
+                <span className="text-success fw-semibold">
+                  ✔ Attendance completed
+                </span>
+              )}
+            </div>
+
           </Card.Body>
         </Card>
+
       )}
 
       <Tabs className="mb-4">
@@ -167,10 +234,27 @@ const Dashboard = () => {
           <div className="mt-4">
             <h4>Quick Stats</h4>
             <Row className="g-4 mt-2">
-              <Col md={3}><Card className="stat-card"><Card.Body><h6>Total Employees</h6><h3>{stats.totalEmployees}</h3></Card.Body></Card></Col>
-              <Col md={3}><Card className="stat-card"><Card.Body><h6>Present Today</h6><h3>{stats.presentToday}</h3></Card.Body></Card></Col>
-              <Col md={3}><Card className="stat-card"><Card.Body><h6>On Leave</h6><h3>{stats.onLeave}</h3></Card.Body></Card></Col>
-              <Col md={3}><Card className="stat-card"><Card.Body><h6>Departments</h6><h3>{stats.departments}</h3></Card.Body></Card></Col>
+              <Col md={3}>
+                <Link to={"/employees"} className="link">
+                  <Card className="stat-card"><Card.Body><h6>Total Employees</h6><h3>{stats.totalEmployees}</h3></Card.Body></Card>
+                </Link>
+              </Col>
+              <Col md={3}>
+                <Link to={"/attendance"} className="link">
+                  <Card className="stat-card"><Card.Body><h6>Present Today</h6><h3>{stats.presentToday}</h3></Card.Body></Card>
+                </Link>
+              </Col>
+              <Col md={3}>
+                <Link to={"/leaves"} className="link">
+                  <Card className="stat-card"><Card.Body><h6>On Leave</h6><h3>{stats.onLeave}</h3></Card.Body></Card>
+                </Link>
+              </Col>
+              <Col md={3}>
+                <Link to={"/employees"} className="link">
+                  <Card className="stat-card"><Card.Body><h6>Departments</h6><h3>{stats.departments}</h3></Card.Body></Card>
+                </Link>
+              </Col>
+
             </Row>
           </div>
         </Tab>
@@ -208,35 +292,149 @@ const Dashboard = () => {
 
             <Card className="mt-3">
               <Card.Body>
-                <div className="table-responsive">
-                  <table className="table table-hover align-middle">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Designation</th>
-                        <th>Department</th>
-                        <th>Status</th>
-                        <th>Joining Date</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {employees.length ? employees.map(emp => (
-                        <tr key={emp.id}>
-                          <td>{emp.firstName} {emp.lastName}<br/><small>{emp.email}</small></td>
-                          <td>{emp.designation}</td>
-                          <td>{emp.departmentName}</td>
-                          <td>{emp.status || "ACTIVE"}</td>
-                          <td>{emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : "N/A"}</td>
-                          <td>
-                            <Button variant="link" size="sm" onClick={() => handleEditEmployee(emp)}><FaEdit /></Button>
-                            <Button variant="link" size="sm" className="text-danger" onClick={() => handleDeleteEmployee(emp.id)}><FaTrash /></Button>
-                          </td>
+                {/* Desktop Table */}
+                <div className="d-none d-md-block">
+                  <div className="table-responsive">
+                    <table className="table table-hover align-middle">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Designation</th>
+                          <th>Department</th>
+                          <th>Status</th>
+                          <th>Joining Date</th>
+                          <th>Actions</th>
                         </tr>
-                      )) : <tr><td colSpan="6" className="text-center">No employees found.</td></tr>}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {employees.length ? employees.map(emp => (
+                          <tr key={emp.id}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => navigate(`/employees/${emp.id}`)}
+                          >
+                            <td>
+                              <div className="d-flex align-items-center gap-2">
+                                <img
+                                  src={emp.avatar ? `${API_BASE_URL}${emp.avatar}` : "/profile.jpg"}
+                                  alt="Avatar"
+                                  style={{ width: 50, height: 50, borderRadius: "50%" }}
+                                />
+                                <div>
+                                  <div className="fw-semibold">{emp.firstName} {emp.lastName}</div>
+                                  <small className="text-muted">{emp.email}</small>
+                                </div>
+                              </div>
+                            </td>
+                            <td>{emp.designation}</td>
+                            <td>{emp.departmentName}</td>
+                            <td>{emp.status || "ACTIVE"}</td>
+                            <td>{emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : "N/A"}</td>
+                            <td>
+                              <Button
+                                variant="link"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditEmployee(emp);
+                                }}
+                              >
+                                <FaEdit />
+                              </Button>
+                              <Button
+                                variant="link"
+                                size="sm"
+                                className="text-danger"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteEmployee(emp.id);
+                                }}
+                              >
+                                <FaTrash />
+                              </Button>
+                            </td>
+                          </tr>
+                        )) : (
+                          <tr>
+                            <td colSpan="6" className="text-center">No employees found.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+                {/* Mobile Cards */}
+                <div className="d-block d-md-none">
+                  {employees.length ? employees.map(emp => (
+                    <Card key={emp.id} className="mb-3 shadow-sm"
+                      onClick={() => navigate(`/employees/${emp.id}`)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Card.Body>
+                        <div className="d-flex align-items-center mb-2">
+                          <img
+                            src={emp.avatar ? `${API_BASE_URL}${emp.avatar}` : "/profile.jpg"}
+                            alt="Avatar"
+                            style={{ width: 60, height: 60, borderRadius: "50%", marginRight: 12 }}
+                          />
+                          <div>
+                            <div className="fw-bold">
+                              {emp.firstName} {emp.lastName}
+                            </div>
+                            <small className="text-muted">{emp.email}</small>
+                          </div>
+                        </div>
+
+                        <div className="small text-muted mb-1">
+                          <strong>Designation:</strong> {emp.designation || "—"}
+                        </div>
+
+                        <div className="small text-muted mb-1">
+                          <strong>Department:</strong> {emp.departmentName || "—"}
+                        </div>
+
+                        <div className="small text-muted mb-1">
+                          <strong>Status:</strong>{" "}
+                          <span className={`badge ${emp.status === "INACTIVE" ? "bg-danger" : "bg-success"}`}>
+                            {emp.status || "ACTIVE"}
+                          </span>
+                        </div>
+
+                        <div className="small text-muted mb-3">
+                          <strong>Joined:</strong>{" "}
+                          {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : "N/A"}
+                        </div>
+
+                        <div className="d-flex justify-content-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline-primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditEmployee(emp);
+                            }}
+                          >
+                            <FaEdit />
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteEmployee(emp.id);
+                            }}
+                          >
+                            <FaTrash />
+                          </Button>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  )) : (
+                    <div className="text-center text-muted">No employees found.</div>
+                  )}
+                </div>
+
+
               </Card.Body>
             </Card>
           </div>
@@ -254,49 +452,57 @@ const Dashboard = () => {
     </>
   );
 
-  
+
   // Employee View
 
   const renderEmployeeView = () => (
     <div className="employee-dashboard">
       <Row>
         <Col md={8}>
-          <Card className="mb-4">
-            <Card.Body>
-              <h4>Welcome back, {user.employee?.firstName}</h4>
+          <Card className="attendance-card mb-4">
+            <Card.Body className="text-center">
 
-              {canCheckAttendance && (
-                <Card className="mb-3">
-                  <Card.Body>
-                    <h6>Your Attendance</h6>
-                    <p>{employeeDashboard.checkIn ? `Checked in at: ${employeeDashboard.checkIn}` : "Not checked in yet"}</p>
-                    <p>{employeeDashboard.checkOut ? `Checked out at: ${employeeDashboard.checkOut}` : ""}</p>
+              <h6 className="text-muted mb-1">Today's Work Duration</h6>
 
-                    {!employeeDashboard.checkIn && (
-                      <Button className="me-2" onClick={handleCheckIn}>✔ Check In</Button>
-                    )}
-                    {employeeDashboard.checkIn && !employeeDashboard.checkOut && (
-                      <Button variant="danger" className="me-2" onClick={handleCheckOut}>⛔ Check Out</Button>
-                    )}
-                    {employeeDashboard.checkIn && employeeDashboard.checkOut && (
-                      <span className="text-success">✔ Attendance completed for today</span>
-                    )}
-                  </Card.Body>
-                </Card>
+              <div className="work-timer">
+                {employeeDashboard.checkIn ? workTimer : "00:00:00"}
+              </div>
+
+              <div className="mt-2 text-muted small">
+                {employeeDashboard.checkIn
+                  ? `Checked in at ${new Date(employeeDashboard.checkIn).toLocaleTimeString()}`
+                  : "You haven't checked in yet"}
+              </div>
+
+              {employeeDashboard.checkOut && (
+                <div className="text-muted small">
+                  Checked out at {new Date(employeeDashboard.checkOut).toLocaleTimeString()}
+                </div>
               )}
 
-              <Row className="mt-4">
-                <Col md={6}>
-                  <Card>
-                    <Card.Body>
-                      <h6>Leave Balance</h6>
-                      <p>{employeeDashboard.leaveUsed} / {employeeDashboard.leaveTotal} used</p>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
+              <div className="mt-4 d-flex justify-content-center gap-3">
+                {!employeeDashboard.checkIn && (
+                  <Button className="check-btn check-in" onClick={handleCheckIn}>
+                    ✔ Check In
+                  </Button>
+                )}
+
+                {employeeDashboard.checkIn && !employeeDashboard.checkOut && (
+                  <Button className="check-btn check-out" onClick={handleCheckOut}>
+                    ⛔ Check Out
+                  </Button>
+                )}
+
+                {employeeDashboard.checkIn && employeeDashboard.checkOut && (
+                  <span className="text-success fw-semibold">
+                    ✔ Attendance completed
+                  </span>
+                )}
+              </div>
+
             </Card.Body>
           </Card>
+
         </Col>
 
         <Col md={4}>
@@ -315,7 +521,7 @@ const Dashboard = () => {
 
 
   // Main render
- 
+
   if (loading || !user) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>

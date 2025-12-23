@@ -14,6 +14,11 @@
   }
 }
 
+.link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /*  HEADER (TITLE + BUTTON ROW) */
 @media (max-width: 768px) {
   .d-flex.justify-content-between.mb-4 {
@@ -147,4 +152,44 @@
   td small {
     display: block;
   }
+}
+
+
+.attendance-card {
+  max-width: 400px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f9fbff, #eef3ff);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.work-timer {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2b4eff;
+}
+
+.check-btn {
+  padding: 10px 22px;
+  font-weight: 600;
+  border-radius: 30px;
+  min-width: 140px;
+}
+
+.check-in {
+  background-color: #2b4eff;
+  border: none;
+}
+
+.check-in:hover {
+  background-color: #1f3ad6;
+}
+
+.check-out {
+  background-color: #ff4d4f;
+  border: none;
+}
+
+.check-out:hover {
+  background-color: #d9363e;
 }

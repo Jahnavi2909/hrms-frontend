@@ -4,6 +4,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { eodApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 // EOD FORM
 
@@ -101,6 +102,7 @@ const EndOfTheDayReport = () => {
   );
   const [message, setMessage] = useState(null);
 
+  const navigate = useNavigate();
 
   const role = user.role;
 
@@ -206,7 +208,7 @@ const EndOfTheDayReport = () => {
               <tbody>
                 {filteredEODs.length > 0 ? (
                   filteredEODs.map((e) => (
-                    <tr key={e.id}>
+                    <tr key={e.id} onClick={() => navigate(`/employee/${e.employeeId}/eod-report`)}>
                       {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
                         <td>
                           <strong>{e.employeeName}</strong>
@@ -278,7 +280,7 @@ const EndOfTheDayReport = () => {
 
           <div className="eod-mobile-list">
             {filteredEODs.map((e) => (
-              <div className="eod-card" key={e.id}>
+              <div className="eod-card" key={e.id} onClick={() => navigate(`/employee/${e.employeeId}/eod-report`)}>
                 {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
                   <div className="field">
                     <div className="label">Employee</div>

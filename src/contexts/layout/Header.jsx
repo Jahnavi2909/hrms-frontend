@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { FaBell, FaCog, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../AuthContext";
@@ -35,18 +34,18 @@ const Header = () => {
             <Dropdown.Toggle variant="light" className="bg-transparent border-0 d-flex align-items-center">
               <div className="d-flex align-items-center">
                 <div className="me-2 text-end d-none d-md-block">
-                  <div className="fw-medium">{user?.employee.firstName}</div>
+                  <div className="fw-medium">{user?.employee?.firstName || user?.username}</div>
                   <small className="text-muted">{user?.role?.replace("ROLE_", "")}</small>
                 </div>
                 <div className="avatar-circle bg-primary text-white">
-                  {user?.employee.firstName ? user.employee.firstName[0] : "U"}
+                  {user?.employee?.firstName ? user.employee?.firstName[0] : "U"}
                 </div>
               </div>
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="dropdown-menu-end shadow-sm border-0">
               <Dropdown.Header className="bg-light">
-                <h6 className="mb-0">{user?.employee.firstName}</h6>
+                <h6 className="mb-0">{user?.employee?.firstName || user?.username}</h6>
                 <small className="text-muted">{user?.email}</small>
               </Dropdown.Header>
               <Dropdown.Divider />

@@ -21,11 +21,20 @@ export const AuthProvider = ({ children }) => {
   const isInitialLoad = useRef(true);
   const prevUnreadCount = useRef(0);
 
+  const isTokenExpired = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  };
+
   useEffect(() => {
     const savedUser = Cookies.get("user");
     const savedToken = Cookies.get("token");
 
-    if (savedUser && savedToken) {
+    if (savedUser && savedToken && !isTokenExpired(savedToken)) {
       try {
         setUser(JSON.parse(savedUser));
         setToken(savedToken);
@@ -54,6 +63,8 @@ export const AuthProvider = ({ children }) => {
         isInitialLoad.current = false;
       }
     };
+
+
 
     const handleIncoming = (payload) => {
       const newNotification = JSON.parse(payload.body);
@@ -135,6 +146,7 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: msg };
     }
   };
+
 
   const logout = () => {
     Cookies.remove("token");
