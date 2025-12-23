@@ -97,9 +97,9 @@ const Login = () => {
                             <Form.Group className="mb-4">
                                 <div className="d-flex justify-content-between">
                                     <Form.Label>Password</Form.Label>
-                                    <Link to="/forgot-password" className="small">
+                                    {/* <Link to="/forgot-password" className="small">
                                         Forgot password?
-                                    </Link>
+                                    </Link> */}
                                 </div>
                                 <div className="input-group">
                                     <span className="input-group-text">
@@ -143,14 +143,14 @@ const Login = () => {
                                 <span className="px-2 bg-white text-muted">OR</span>
                             </div>
 
-                            <div className="text-center mt-3">
+                            {/* <div className="text-center mt-3">
                                 <p className="mb-0">
                                     Don't have an account?{' '}
                                     <Link to="/signup" className="text-primary fw-medium">
                                         Sign up
                                     </Link>
                                 </p>
-                            </div>
+                            </div> */}
                         </Form>
                     </Card.Body>
                 </Card>

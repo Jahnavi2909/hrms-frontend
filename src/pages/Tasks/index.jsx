@@ -157,7 +157,7 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [dateFilter, setDateFilter] = useState(new Date().toISOString().split("T")[0]);
   const [message, setMessage] = useState(null);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
@@ -267,12 +267,22 @@ const Tasks = () => {
                     <td>{t.dueDate}</td>
                     <td>
                       {role === "ROLE_EMPLOYEE" && t.assignedToEmployeeId === user.employeeId && t.status !== "COMPLETED" && (
-                        <Button size="sm" variant="success" onClick={() => handleStatusChange(t.id, "COMPLETED")}>
+                        <Button size="sm" variant="success" onClick={(e) => {
+                          e.stopPropagation()
+                          handleStatusChange(t.id, "COMPLETED")
+                        }
+                        }
+                        >
                           Mark Complete
                         </Button>
                       )}
                       {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && t.status !== "COMPLETED" && (
-                        <Button size="sm" variant="success" onClick={() => handleStatusChange(t.id, "COMPLETED")}>
+                        <Button size="sm" variant="success" onClick={(e) => {
+                          e.stopPropagation()
+                          handleStatusChange(t.id, "COMPLETED")
+                        }
+                        }
+                        >
                           Complete
                         </Button>
                       )}
@@ -334,7 +344,11 @@ const Tasks = () => {
                     <Button
                       size="sm"
                       variant="success"
-                      onClick={() => handleStatusChange(t.id, "COMPLETED")}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleStatusChange(t.id, "COMPLETED")
+                      }
+                      }
                     >
                       Mark Complete
                     </Button>

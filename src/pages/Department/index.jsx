@@ -158,14 +158,22 @@ const Department = () => {
                               size="sm"
                               variant="info"
                               className="me-2"
-                              onClick={() => handleEditDept(dept)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleEditDept(dept)
+                              }
+                              }
                             >
                               Edit
                             </Button>
                             <Button
                               size="sm"
                               variant="danger"
-                              onClick={() => handleDeleteDept(dept.id)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleDeleteDept(dept.id)
+                              }
+                              }
                             >
                               Delete
                             </Button>
@@ -197,7 +205,11 @@ const Department = () => {
                           size="sm"
                           variant="info"
                           className="w-100 mb-2"
-                          onClick={() => handleEditDept(dept)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleEditDept(dept)
+                          }
+                          }
                         >
                           Edit
                         </Button>
@@ -206,7 +218,10 @@ const Department = () => {
                           size="sm"
                           variant="danger"
                           className="w-100"
-                          onClick={() => handleDeleteDept(dept.id)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteDept(dept.id)}
+                            }
                         >
                           Delete
                         </Button>

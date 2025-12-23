@@ -131,7 +131,7 @@ const Employee = () => {
                                                                 : "/profile.jpg"
                                                         }
                                                         alt="Avatar"
-                                                        style={{width:"60px", height:"60px", borderRadius: "50%", objectFit: "cover", marginRight: "10px"}}
+                                                        style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
                                                     />
 
                                                     <div className="employee-text">
@@ -150,13 +150,20 @@ const Employee = () => {
                                             <td>
                                                 <div className="d-flex">
                                                     <Button variant="link" size="sm" className="text-primary p-0 me-2"
-                                                        onClick={() => handleEdit(emp)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEdit(emp);
+                                                        }}
                                                         disabled={!isAdminOrHr}
                                                     >
                                                         <FaEdit />
                                                     </Button>
                                                     <Button variant="link" size="sm" className="text-danger p-0"
-                                                        onClick={() => handleDelete(emp.id)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(emp.id)
+                                                        }
+                                                        }
                                                         disabled={!isAdminOrHr}
                                                     >
                                                         <FaTrash />
@@ -215,7 +222,11 @@ const Employee = () => {
                                             variant="link"
                                             size="sm"
                                             className="text-primary p-0"
-                                            onClick={() => handleEdit(emp)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                handleEdit(emp)
+                                            }
+                                            }
                                         >
                                             <FaEdit />
                                         </Button>
@@ -224,7 +235,10 @@ const Employee = () => {
                                             variant="link"
                                             size="sm"
                                             className="text-danger p-0"
-                                            onClick={() => handleDelete(emp.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                handleDelete(emp.id)
+                                            }}
                                         >
                                             <FaTrash />
                                         </Button>
