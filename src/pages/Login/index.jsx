@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
 import './style.css';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,25 +9,26 @@ import './style.css';
 const Login = () => {
 
 
-    const [email,setEmail] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const {login, isAuthenticated} = useAuth();
+    const { login, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
+    const { user } = useAuth();
 
     useEffect(() => {
-        if(isAuthenticated) {
-            navigate("/");
+        if (user) {
+            navigate("/", { replace: true });
         }
-    })
+    }, [user]);
 
 
     const handleSubmit = async evt => {
         evt.preventDefault();
 
-        if(!email || !password) {
+        if (!email || !password) {
             setError("Please enter  both email and password");
             return;
         }
@@ -38,13 +39,13 @@ const Login = () => {
 
             const result = await login(email, password);
 
-            if(result.success) {
-                navigate("/")
-            }else{
+            if (result.success) {
+                 navigate('/', { replace: true });
+            } else {
                 setError(result.message || "Failed to log in. Please check your credentails.");
             }
 
-        }catch(err) {
+        } catch (err) {
             console.log("Login error:", err);
             setError("An unexpected error occurred. Please try again later.");
         } finally {

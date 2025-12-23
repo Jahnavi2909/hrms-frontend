@@ -1,7 +1,7 @@
 import './App.css';
 import Login from './pages/Login';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Attendance from './pages/Attendance';
 import Sidebar from './contexts/layout/Sidebar';
@@ -54,133 +54,132 @@ const AppLayout = ({ children }) => {
 }
 
 function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+      <Routes>
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-          <Route path="/" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Dashboard />
-              </AppLayout>
-            </PrivateRoute>
-          } />
+        <Route path="/" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          </PrivateRoute>
+        } />
 
-          <Route path="/attendance" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Attendance />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/employee/:id/monthly-attendance" element={
-            <PrivateRoute>
-              <AppLayout>
-                <AttendanceHistory />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="employees/:id" element={
-            <PrivateRoute>
-              <AppLayout>
-                <EmployeeProfile />
-              </AppLayout>
-            </PrivateRoute>
-          } />
+        <Route path="/attendance" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Attendance />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/employee/:id/monthly-attendance" element={
+          <PrivateRoute>
+            <AppLayout>
+              <AttendanceHistory />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="employees/:id" element={
+          <PrivateRoute>
+            <AppLayout>
+              <EmployeeProfile />
+            </AppLayout>
+          </PrivateRoute>
+        } />
 
-          <Route path="/employees" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Employee />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/department/:id/employees" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Employee />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/leaves" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Leaves />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/tasks" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Tasks />
-              </AppLayout>
-            </PrivateRoute>
-          } />
+        <Route path="/employees" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Employee />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/department/:id/employees" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Employee />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/leaves" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Leaves />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/tasks" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Tasks />
+            </AppLayout>
+          </PrivateRoute>
+        } />
 
-          <Route path="/employee/:id/tasks" element={
-            <PrivateRoute>
-              <AppLayout>
-                <TaskHistory />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/eod-report" element={
-            <PrivateRoute>
-              <AppLayout>
-                <EndOfTheDayReport />
-              </AppLayout>
-            </PrivateRoute>
-          } />
+        <Route path="/employee/:id/tasks" element={
+          <PrivateRoute>
+            <AppLayout>
+              <TaskHistory />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/eod-report" element={
+          <PrivateRoute>
+            <AppLayout>
+              <EndOfTheDayReport />
+            </AppLayout>
+          </PrivateRoute>
+        } />
 
-          <Route path="/employee/:id/eod-report" element={
-            <PrivateRoute>
-              <AppLayout>
-                <EODHistory />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/settings" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Settings />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/notifications" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Notifications />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/departments" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Department />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/profile" element={
-            <PrivateRoute>
-              <AppLayout>
-                <EmployeeProfile />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-          <Route path="/payroll" element={
-            <PrivateRoute>
-              <AppLayout>
-                <Payroll />
-              </AppLayout>
-            </PrivateRoute>
-          } />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+        <Route path="/employee/:id/eod-report" element={
+          <PrivateRoute>
+            <AppLayout>
+              <EODHistory />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/settings" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Settings />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/notifications" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Notifications />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/departments" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Department />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/profile" element={
+          <PrivateRoute>
+            <AppLayout>
+              <EmployeeProfile />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+        <Route path="/payroll" element={
+          <PrivateRoute>
+            <AppLayout>
+              <Payroll />
+            </AppLayout>
+          </PrivateRoute>
+        } />
+      </Routes>
   );
 }
 

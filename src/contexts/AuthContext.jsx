@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { authApi, notificationApi } from "../services/api";
+import { API_BASE_URL, authApi, notificationApi } from "../services/api";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
@@ -29,6 +29,26 @@ export const AuthProvider = ({ children }) => {
       return true;
     }
   };
+
+  useEffect(() => {
+    if (!token) return;
+
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const expiryTime = payload.exp * 1000;
+    const timeout = expiryTime - Date.now();
+
+    if (timeout <= 0) {
+      logout();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      logout();
+    }, timeout);
+
+    return () => clearTimeout(timer);
+  }, [token]);
+
 
   useEffect(() => {
     const savedUser = Cookies.get("user");
@@ -79,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     const connectWebSocket = () => {
       const stomp = new Client({
         webSocketFactory: () =>
-          new SockJS(`http://localhost:8080/ws?access_token=${token}`),
+          new SockJS(`${API_BASE_URL}/ws?access_token=${token}`),
         reconnectDelay: 5000,
       });
 
@@ -147,15 +167,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   const logout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
     setUser(null);
     setToken(null);
     setNotifications([]);
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
+
 
   const markAsRead = async (id) => {
     try {
