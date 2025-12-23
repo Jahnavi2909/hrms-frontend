@@ -100,7 +100,6 @@ export const AuthProvider = ({ children }) => {
       const stomp = new Client({
         webSocketFactory: () =>
           new SockJS(`${API_BASE_URL}/ws?access_token=${token}`),
-          new SockJS(`https://d3qs09ype2r7pk.cloudfront.net/ws?access_token=${token}`),
         reconnectDelay: 5000,
       });
 
