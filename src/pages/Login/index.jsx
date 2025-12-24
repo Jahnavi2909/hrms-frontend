@@ -97,9 +97,9 @@ const Login = () => {
                             <Form.Group className="mb-4">
                                 <div className="d-flex justify-content-between">
                                     <Form.Label>Password</Form.Label>
-                                    {/* <Link to="/forgot-password" className="small">
+                                    <Link to="/forgot-password" className="small">
                                         Forgot password?
-                                    </Link> */}
+                                    </Link>
                                 </div>
                                 <div className="input-group">
                                     <span className="input-group-text">

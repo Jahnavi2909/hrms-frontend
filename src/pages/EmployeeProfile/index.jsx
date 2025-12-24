@@ -29,7 +29,7 @@ const EmployeeProfile = () => {
         const response = await employeeApi.getById(id || user.employeeId);
         setEmployee(response.data.data);
 
-        const attendanceRes = await attendanceApi.getAttendanceHistory(user.employeeId || id);
+        const attendanceRes = await attendanceApi.getAttendanceHistory(id || user.employeeId);
         setAttendance(attendanceRes.data.data || []);
       } catch (error) {
         setError("Failed to load employee data");

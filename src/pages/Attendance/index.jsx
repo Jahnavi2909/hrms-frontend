@@ -1,18 +1,18 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Card, Form, Table, Badge, ProgressBar } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 import { attendanceApi } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  PieChart,
+  Pie,
+  Cell,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
-import "./style.css";
+
 import useAutoCheckout from "../../contexts/layout/AutoCheckout";
 
 const OFFICE_START_HOUR = 10;
@@ -493,25 +493,67 @@ const Attendance = () => {
   );
 };
 
+/* ---------------- WEEKLY DONUT CHART ---------------- */
+const WeeklyAttendanceChart = memo(({ summary, onStatusClick }) => {
+  const data = useMemo(
+    () =>
+      [
+        { name: "Present", value: summary.present },
+        { name: "Leave", value: summary.leave },
+        { name: "Weekend", value: summary.weekend },
+        { name: "Payable", value: summary.payableDays },
+      ].filter(item => item.value > 0),
+    [summary]
+  );
 
-/* ---------------- WEEKLY CHART ---------------- */
-const WeeklyAttendanceChart = memo(({ summary }) => {
-  const data = [
-    { name: "Present", value: summary.present },
-    { name: "Leave", value: summary.leave },
-    { name: "Weekend", value: summary.weekend },
-    { name: "Payable", value: summary.payable },
-  ];
+  const COLORS = {
+    Present: "#198754",
+    Leave: "#ffc107",
+    Weekend: "#6c757d",
+    Payable: "#0d6efd",
+  };
+
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  const renderLabel = ({ percent }) =>
+    `${(percent * 100).toFixed(0)}%`;
+
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={data}>
-        <XAxis dataKey="name" />
-        <YAxis allowDecimals={false} />
+    <ResponsiveContainer width="100%" height={240}>
+      <PieChart>
+        <text
+          x="50%"
+          y="50%"
+          dy="0.35em"
+          textAnchor="middle"
+          fontSize={14}
+          fontWeight={600}
+        >
+          {total} Days
+        </text>
+
+
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          innerRadius={50}
+          outerRadius={80}
+          label={renderLabel}
+          onClick={(data) => onStatusClick?.(data.name)}
+        >
+          {data.map(entry => (
+            <Cell key={entry.name} fill={COLORS[entry.name]} cursor="pointer" />
+          ))}
+        </Pie>
+
         <Tooltip />
-        <Bar dataKey="value" fill="#0d6efd" />
-      </BarChart>
+        <Legend />
+      </PieChart>
     </ResponsiveContainer>
-  )
+  );
 });
 
 

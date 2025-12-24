@@ -168,7 +168,6 @@ const EmployeeForm = ({ editingEmployee, onSubmit, onCancel }) => {
                                     required
                                 >
                                     <option value="EMPLOYEE">Employee</option>
-                                    <option value="ADMIN">Admin</option>
                                     <option value="HR">HR</option>
                                     <option value="MANAGER">Manager</option>
                                 </Form.Select>

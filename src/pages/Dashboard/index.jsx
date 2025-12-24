@@ -234,7 +234,7 @@ const Dashboard = () => {
 
   const renderAdminView = () => (
     <>
-      {canCheckAttendance && (
+      {canCheckAttendance && !(user?.role === "ROLE_ADMIN") && (
         <Card className="attendance-card mb-4">
           <Card.Body className="text-center">
 
@@ -725,8 +725,14 @@ const Dashboard = () => {
 
   return (
     <Container fluid className="py-4">
-      <div className="d-flex justify-content-between mb-4">
-        <h2>{isAdminOrHr ? "Admin Dashboard" : "My Dashboard"}</h2>
+      <div className=" mb-4">
+        <h2>
+          Welcome, {user?.employee?.firstName || user?.username} {user?.employee?.lastName || ''}
+        </h2>
+        <p className="text-muted">
+          {isAdminOrHr ? "You have administrative access" : "Here’s your activity overview"}
+        </p>
+
       </div>
 
       {isAdminOrHr ? renderAdminView() : renderEmployeeView()}

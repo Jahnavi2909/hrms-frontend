@@ -12,8 +12,8 @@ const Header = () => {
   return (
     <Navbar bg="white" variant="light" className="border-bottom shadow-sm nav-bar sticky-top">
       <Container fluid className="px-4">
-        <Navbar.Brand href="#" className="d-none d-md-block brand">
-          <span className="text-primary fw-bold">Raynx</span> Systems
+        <Navbar.Brand href="#" className=" d-md-block brand">
+          <img src="/Raynxsystemslogo.png" alt="Raynx Systems" className="logo"/>
         </Navbar.Brand>
 
         <Nav className="ms-auto align-items-center">

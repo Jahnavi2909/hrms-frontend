@@ -23,11 +23,16 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
+
 .profile-cover {
   height: 180px;
   width: 100%;
-  background: linear-gradient(135deg, #007bff, #6610f2);
+  background-image: url("../../../public/Raynxsystemslogo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; 
 }
+
 
 .profile-info {
   display: flex;
