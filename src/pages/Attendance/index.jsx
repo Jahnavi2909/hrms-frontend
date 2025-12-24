@@ -476,16 +476,19 @@ const Attendance = () => {
       {isAdmin && weeklySummaryData && (
         <Card className="mt-3 p-3">
           <h5>Weekly Summary</h5>
-          <div className="d-flex justify-content-between flex-wrap mb-3">
-            <div>Payable Days: {weeklySummaryData.payable}</div>
-            <div>Present: {weeklySummaryData.present}</div>
-            <div>Leave: {weeklySummaryData.leave}</div>
-            <div>Weekend: {weeklySummaryData.weekend}</div>
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="mb-3">
+              <div>Payable Days: {weeklySummaryData.payableDays}</div>
+              <div>Present: {weeklySummaryData.present}</div>
+              <div>Leave: {weeklySummaryData.leave}</div>
+              <div>Weekend: {weeklySummaryData.weekend}</div>
+
+            </div>
+            {
+              isAdmin && weeklySummaryData &&
+              <WeeklyAttendanceChart summary={weeklySummaryData} />
+            }
           </div>
-          {
-            isAdmin && weeklySummaryData &&
-            <WeeklyAttendanceChart summary={weeklySummaryData} />
-          }
 
         </Card>
       )}
@@ -519,7 +522,7 @@ const WeeklyAttendanceChart = memo(({ summary, onStatusClick }) => {
     `${(percent * 100).toFixed(0)}%`;
 
   return (
-    <ResponsiveContainer width="100%" height={240}>
+    <ResponsiveContainer width="100%" height={260}>
       <PieChart>
         <text
           x="50%"
