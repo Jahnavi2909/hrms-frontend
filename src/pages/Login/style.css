@@ -15,7 +15,7 @@
 
 .login-card {
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: none;
   background: #ffffff;
 }
@@ -29,6 +29,13 @@
 .input-group .form-control {
   border-radius: 0 8px 8px 0;
 }
+
+.input-group .form-control:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #ced4da;
+}
+
 
 /* DIVIDER */
 .divider {
@@ -82,7 +89,10 @@
     font-size: 1.4rem !important;
   }
 
-  p, label, .small, .text-muted {
+  p,
+  label,
+  .small,
+  .text-muted {
     font-size: 14px !important;
   }
 
@@ -110,16 +120,15 @@
     padding: 8px;
   }
 
-  .input-group {
-    flex-direction: column;
-  }
-
   .input-group-text {
-    border-radius: 8px;
-    margin-bottom: 8px;
-    width: 100%;
+    background: #f1f3f5;
+    border-radius: 8px 0 0 8px;
+    width: 42px;
+    display: flex;
+    align-items: center;
     justify-content: center;
   }
+
 
   .input-group .form-control {
     border-radius: 8px;

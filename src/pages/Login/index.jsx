@@ -59,6 +59,7 @@ const Login = () => {
                 <Card className="login-card">
                     <Card.Body className="p-4">
                         <div className="text-center mb-4">
+                             <img src="/Raynxsystemslogo.png" alt="Raynx Systems" className="logo"/>
                             <h2 className="fw-bold mb-1">Welcome Back</h2>
                             <p className="text-muted">Sign in to your HRMS account</p>
                         </div>
@@ -77,7 +78,7 @@ const Login = () => {
 
                         <Form onSubmit={handleSubmit} className="mt-3">
                             <Form.Group className="mb-3">
-                                <Form.Label>Email</Form.Label>
+                                <Form.Label htmlFor="email">Email</Form.Label>
                                 <div className="input-group">
                                     <span className="input-group-text">
                                         <i className="bi bi-person"></i>
@@ -85,6 +86,7 @@ const Login = () => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter your email"
+                                        id="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         disabled={loading}
@@ -96,7 +98,7 @@ const Login = () => {
 
                             <Form.Group className="mb-4">
                                 <div className="d-flex justify-content-between">
-                                    <Form.Label>Password</Form.Label>
+                                    <Form.Label htmlFor="password">Password</Form.Label>
                                     {/* <Link to="/forgot-password" className="small">
                                         Forgot password?
                                     </Link> */}
@@ -107,6 +109,7 @@ const Login = () => {
                                     </span>
                                     <Form.Control
                                         type="password"
+                                        id="password"
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -138,10 +141,6 @@ const Login = () => {
                                     'Sign In'
                                 )}
                             </Button>
-
-                            <div className="divider my-4">
-                                <span className="px-2 bg-white text-muted">OR</span>
-                            </div>
 
                             {/* <div className="text-center mt-3">
                                 <p className="mb-0">

@@ -1,4 +1,7 @@
 /* APP LAYOUT */
+*{
+  cursor: default;
+}
 
 html, body, #root {
   height: 100%;
