@@ -1,9 +1,4 @@
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> c81af604f4616cf9c8cd4e1d076b71ee4a6b5098
 name: Deploy Frontend to S3 and CloudFront
 
 on:
