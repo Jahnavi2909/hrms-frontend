@@ -1,7 +1,14 @@
 /* APP LAYOUT */
-*{
-  cursor: default;
+* {
+  caret-color: transparent;
 }
+
+input,
+textarea,
+[contenteditable="true"] {
+  caret-color: auto !important;
+}
+
 
 html, body, #root {
   height: 100%;
