@@ -53,6 +53,8 @@ const AppLayout = ({ children }) => {
   )
 }
 
+// Main App Component
+
 function App() {
   const { user, loading } = useAuth();
 

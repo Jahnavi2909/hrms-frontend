@@ -98,7 +98,11 @@ const Login = () => {
 
                             <Form.Group className="mb-4">
                                 <div className="d-flex justify-content-between">
+<<<<<<< HEAD
                                     <Form.Label htmlFor="password">Password</Form.Label>
+=======
+                                    <Form.Label>Password</Form.Label>
+>>>>>>> c81af604f4616cf9c8cd4e1d076b71ee4a6b5098
                                     {/* <Link to="/forgot-password" className="small">
                                         Forgot password?
                                     </Link> */}
@@ -142,6 +146,7 @@ const Login = () => {
                                 )}
                             </Button>
 
+<<<<<<< HEAD
                             {/* <div className="text-center mt-3">
                                 <p className="mb-0">
                                     Don't have an account?{' '}
@@ -150,6 +155,11 @@ const Login = () => {
                                     </Link>
                                 </p>
                             </div> */}
+=======
+                            <div className="divider my-4">
+                                <span className="px-2 bg-white text-muted">OR</span>
+                            </div>
+>>>>>>> c81af604f4616cf9c8cd4e1d076b71ee4a6b5098
                         </Form>
                     </Card.Body>
                 </Card>
