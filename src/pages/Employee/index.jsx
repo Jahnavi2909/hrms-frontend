@@ -190,7 +190,9 @@ const Employee = () => {
                                 <div className="mobile-card" key={emp.id} onClick={() => navigate(`/employees/${emp.id}`)}>
 
                                     <div className="field">
-                                        <img src={emp.avatarUrl || "/profile.jpg"} alt="Avatar" className="avatar mb-2" />
+                                        <img src={emp.avatar || "/profile.jpg"} 
+                                            alt="Avatar" 
+                                            className="avatar mb-2" />
                                         <div className="label">Employee</div>
                                         <div className="value">{emp.firstName} {emp.lastName}</div>
                                         <div className="value text-muted" style={{ fontSize: "12px" }}>{emp.email}</div>
