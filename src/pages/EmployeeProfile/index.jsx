@@ -1,44 +1,60 @@
 import { Card, Col, ProgressBar, Row, Tab, Tabs } from "react-bootstrap";
-import { FaCalendarAlt, FaCamera, FaClock, FaEnvelope, FaIdCard, FaMapMarkerAlt, FaPhone, FaUser, FaUserTag, FaUserTie } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaCamera,
+  FaClock,
+  FaEnvelope,
+  FaIdCard,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaUser,
+  FaUserTag,
+  FaUserTie
+} from "react-icons/fa";
 import { attendanceApi, employeeApi } from "../../services/api";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./style.css";
 
-
-
 const SHIFT_HOURS = 8;
 
 const EmployeeProfile = () => {
   const { id } = useParams();
   const { user } = useAuth();
+
   const [error, setError] = useState("");
   const [employee, setEmployee] = useState({});
   const [attendance, setAttendance] = useState([]);
-  const [forceReload, setForceReload] = useState(false);
   const [liveWorked, setLiveWorked] = useState({});
   const [uploading, setUploading] = useState(false);
 
   const fileInputRef = useRef(null);
 
+  /* ================= FETCH EMPLOYEE ================= */
 
   useEffect(() => {
+    if (!id && !user?.employeeId) return;
+
     const fetchEmployeeData = async () => {
       try {
-        const response = await employeeApi.getById(id || user.employeeId);
+        const empId = id || user.employeeId;
+
+        const response = await employeeApi.getById(empId);
         setEmployee(response.data.data);
 
-        const attendanceRes = await attendanceApi.getAttendanceHistory(id || user.employeeId);
+        const attendanceRes = await attendanceApi.getAttendanceHistory(empId);
         setAttendance(attendanceRes.data.data || []);
-      } catch (error) {
+      } catch (err) {
         setError("Failed to load employee data");
-        console.error("Error fetching employee data:", error);
+        console.error(err);
       }
     };
-    fetchEmployeeData();
-  }, [id, user.employeeId]);
 
+    fetchEmployeeData();
+  }, [id, user]);
+
+  /* ================= LIVE WORK TIMER ================= */
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -59,31 +75,32 @@ const EmployeeProfile = () => {
     return () => clearInterval(timer);
   }, [attendance]);
 
-  /* ---------------- AUTO REFRESH ---------------- */
+  /* ================= HELPERS ================= */
 
-  useEffect(() => {
-    const h = () => setForceReload(p => !p);
-    window.addEventListener("attendance-updated", h);
-    return () => window.removeEventListener("attendance-updated", h);
-  }, []);
+  const formatTime = iso =>
+    iso
+      ? new Date(iso).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      : "--:--";
 
-  const formatTime = (iso) => {
-    if (!iso) return "--:--";
-    return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const formatHoursWorked = (time) => {
+  const formatHoursWorked = time => {
     if (!time) return "00 hrs 00 min";
     const [h, m] = time.split(":").map(Number);
-    return `${String(h).padStart(2, "0")} hrs ${String(m).padStart(2, "0")} min`;
+    return `${String(h).padStart(2, "0")} hrs ${String(m).padStart(
+      2,
+      "0"
+    )} min`;
   };
+
+  /* ================= AVATAR ================= */
 
   const handleAvatarClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
-
-  const handleAvatarUpload = async (e) => {
+  const handleAvatarUpload = async e => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -92,14 +109,24 @@ const EmployeeProfile = () => {
 
     try {
       setUploading(true);
-      const res = await employeeApi.uploadAvatar(id || user.employeeId, formData);
-      setEmployee(prev => ({ ...prev, avatar: res.data.data.avatar }));
+      const res = await employeeApi.uploadAvatar(
+        id || user.employeeId,
+        formData
+      );
+
+      setEmployee(prev => ({
+        ...prev,
+        avatar: res.data.data.avatar
+      }));
     } catch (err) {
       alert("Failed to upload image");
+    } finally {
       setUploading(false);
+      fileInputRef.current.value = "";
     }
   };
 
+  /* ================= TIMELINE ================= */
 
   const Timeline = ({ rec }) => {
     const worked = rec.checkOutTime ? rec.workedTime : liveWorked[rec.id];
@@ -109,12 +136,18 @@ const EmployeeProfile = () => {
     return (
       <div className="mt-1">
         <small className="text-muted">
-          {formatTime(rec.checkInTime)} → {rec.checkOutTime ? formatTime(rec.checkOutTime) : "Now"}
+          {formatTime(rec.checkInTime)} →{" "}
+          {rec.checkOutTime ? formatTime(rec.checkOutTime) : "Now"}
         </small>
-        <ProgressBar now={percent} variant={percent < 50 ? "danger" : "success"} />
+        <ProgressBar
+          now={percent}
+          variant={percent < 50 ? "danger" : "success"}
+        />
       </div>
     );
   };
+
+  /* ================= UI ================= */
 
   return (
     <div className="employee-profile">
@@ -122,36 +155,28 @@ const EmployeeProfile = () => {
 
       <div className="profile-header">
         <div className="profile-cover"></div>
+
         <div className="profile-info">
-          <div className="profile-avatar d-flex flex-column avatar" onClick={handleAvatarClick}>
+          <div
+            className="profile-avatar d-flex flex-column avatar"
+            onClick={handleAvatarClick}
+          >
             {employee.avatar ? (
-              <div className="d-flex align-items-center gap-2">
-                <img
-                  src={employee.avatar || "/profile.jpg"}
-                  alt="Profile"
-                  style={{
-                    width: "120px",
-                    height: "120px",
-                    borderRadius: "50%",
-                    objectFit: "cover"
-                  }}
-                />
-                {employee.avatar && (
-                  <button
-                    className="btn btn-danger btn-sm ms-2"
-                  // onClick={handleDeleteAvatar}
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-
-
-
-
+              <img
+                src={employee.avatar}
+                alt="Profile"
+                style={{
+                  width: "120px",
+                  height: "120px",
+                  borderRadius: "50%",
+                  objectFit: "cover"
+                }}
+              />
             ) : (
               <div className="avatar-placeholder">
-                {`${employee?.firstName?.[0] || ""}${employee?.lastName?.[0] || ""}`.toUpperCase()}
+                {`${employee?.firstName?.[0] || ""}${
+                  employee?.lastName?.[0] || ""
+                }`.toUpperCase()}
               </div>
             )}
 
@@ -168,12 +193,21 @@ const EmployeeProfile = () => {
               onChange={handleAvatarUpload}
             />
           </div>
+
           <div className="profile-meta">
-            <h2>{employee.firstName || `${employee?.firstName || ""} ${employee.lastName || ""}`}</h2>
+            <h2>
+              {employee.firstName} {employee.lastName}
+            </h2>
             <p className="text-muted">{employee.designation}</p>
             <div className="employee-meta">
-              <span><FaIdCard className="me-2" /> Employee ID: {employee.employeeId || "N/A"}</span>
-              <span><FaUserTie className="me-2" /> {employee.departmentName || "N/A"}</span>
+              <span>
+                <FaIdCard className="me-2" />
+                Employee ID: {employee.employeeId || "N/A"}
+              </span>
+              <span>
+                <FaUserTie className="me-2" />
+                {employee.departmentName || "N/A"}
+              </span>
             </div>
           </div>
         </div>
@@ -186,37 +220,35 @@ const EmployeeProfile = () => {
               <Card className="mb-4">
                 <Card.Header>Personal Information</Card.Header>
                 <Card.Body>
-                  <Row className="mb-3">
+                  <Row>
                     <Col md={6}>
-                      <p className="mb-1"><FaUser className="me-2" /> <strong>First Name:</strong></p>
+                      <FaUser /> <strong>First Name:</strong>
                       <p>{employee.firstName || "N/A"}</p>
                     </Col>
                     <Col md={6}>
-                      <p className="mb-1"><FaUserTag className="me-2" /> <strong>Last Name:</strong></p>
+                      <FaUserTag /> <strong>Last Name:</strong>
                       <p>{employee.lastName || "N/A"}</p>
                     </Col>
-                  </Row>
-                  <Row className="mb-3">
                     <Col md={6}>
-                      <p className="mb-1"><FaEnvelope className="me-2" /> <strong>Email:</strong></p>
+                      <FaEnvelope /> <strong>Email:</strong>
                       <p>{employee.email || "N/A"}</p>
                     </Col>
                     <Col md={6}>
-                      <p className="mb-1"><FaPhone className="me-2" /> <strong>Phone:</strong></p>
+                      <FaPhone /> <strong>Phone:</strong>
                       <p>{employee.phone || "N/A"}</p>
                     </Col>
-                  </Row>
-                  <Row className="mb-3">
                     <Col md={6}>
-                      <p className="mb-1"><FaCalendarAlt className="me-2" /> <strong>Joining Date:</strong></p>
-                      <p>{employee.joiningDate ? new Date(employee.joiningDate).toLocaleDateString() : "N/A"}</p>
+                      <FaCalendarAlt /> <strong>Joining Date:</strong>
+                      <p>
+                        {employee.joiningDate
+                          ? new Date(
+                              employee.joiningDate
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </p>
                     </Col>
                     <Col md={6}>
-                      <p className="mb-1"><FaCalendarAlt className="me-2" /> <strong>Date of Birth:</strong></p>
-                      <p>{employee.dateOfBirth ? new Date(employee.dateOfBirth).toLocaleDateString() : "N/A"}</p>
-                    </Col>
-                    <Col md={6}>
-                      <p className="mb-1"><FaMapMarkerAlt className="me-2" /> <strong>Address:</strong></p>
+                      <FaMapMarkerAlt /> <strong>Address:</strong>
                       <p>{employee.address || "N/A"}</p>
                     </Col>
                   </Row>
@@ -225,21 +257,20 @@ const EmployeeProfile = () => {
             </Col>
 
             <Col md={4}>
-              <Card className="mb-4">
+              <Card>
                 <Card.Header>Quick Stats</Card.Header>
                 <Card.Body>
-                  <div className="stat-item">
-                    <FaClock className="me-2" />
-                    <div>
-                      <h6>Total Working Days</h6>
-                      {
-                        () => {
-
-                        }
-                      }
-                      <p className="mb-0">{attendance.filter(a => a.attendanceStatus === 'PRESENT' || a.attendanceStatus === 'HALF_DAY').length} days</p>
-                    </div>
-                  </div>
+                  <FaClock /> Total Working Days
+                  <p>
+                    {
+                      attendance.filter(
+                        a =>
+                          a.attendanceStatus === "PRESENT" ||
+                          a.attendanceStatus === "HALF_DAY"
+                      ).length
+                    }{" "}
+                    days
+                  </p>
                 </Card.Body>
               </Card>
             </Col>
@@ -250,71 +281,21 @@ const EmployeeProfile = () => {
           <Card className="mt-4">
             <Card.Header>Attendance History</Card.Header>
             <Card.Body>
-              {/* Desktop Table */}
-              <div className="table-responsive d-none d-md-block">
-                {attendance.length > 0 ? (
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Check In</th>
-                        <th>Check Out</th>
-                        <th>Hours Worked</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {attendance.map((record, idx) => (
-                        <tr key={idx}>
-                          <td>{new Date(record.date).toLocaleDateString()}</td>
-                          <td>
-                            <span className={`badge bg-${record.attendanceStatus === 'PRESENT' ? 'success' : 'danger'}`}>
-                              {record.attendanceStatus}
-                            </span>
-                          </td>
-                          <td>{formatTime(record.checkInTime)}</td>
-                          <td>{formatTime(record.checkOutTime)}</td>
-                          <td>
-                            <div className="field">
-                              <div className="value">
-                                {record.checkOutTime
-                                  ? formatHoursWorked(record.workedTime)
-                                  : formatHoursWorked(liveWorked[record.id])}
-                              </div>
-                              <Timeline rec={record} />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p>No attendance records found</p>
-                )}
-              </div>
-
-              {/* Mobile Cards */}
-              <div className="d-block d-md-none">
-                {attendance.length > 0 ? (
-                  attendance.map((record, idx) => (
-                    <div className="attendance-card p-3 mb-3 border rounded" key={idx}>
-                      <div className="d-flex justify-content-between mb-2">
-                        <span>{new Date(record.date).toLocaleDateString()}</span>
-                        <span className={`badge bg-${record.attendanceStatus === 'PRESENT' ? 'success' : 'danger'}`}>
-                          {record.attendanceStatus}
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <div>Check In: {formatTime(record.checkInTime)}</div>
-                        <div>Check Out: {formatTime(record.checkOutTime)}</div>
-                      </div>
-                      <div className="mt-2">Hours Worked: {record.hoursWorked || '--'}</div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No attendance records found</p>
-                )}
-              </div>
+              {attendance.length ? (
+                attendance.map((rec, idx) => (
+                  <div key={idx}>
+                    {new Date(rec.date).toLocaleDateString()} —{" "}
+                    {formatHoursWorked(
+                      rec.checkOutTime
+                        ? rec.workedTime
+                        : liveWorked[rec.id]
+                    )}
+                    <Timeline rec={rec} />
+                  </div>
+                ))
+              ) : (
+                <p>No attendance records</p>
+              )}
             </Card.Body>
           </Card>
         </Tab>
