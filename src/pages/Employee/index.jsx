@@ -125,13 +125,15 @@ const Employee = () => {
                                             <td>
                                                 <div className="d-flex align-items-center gap-2">
                                                     <img
-                                                        src={
-                                                            emp.avatar
-                                                                ? `${API_BASE_URL}${emp.avatar}`
-                                                                : "/profile.jpg"
-                                                        }
+                                                        src={emp.avatar || "/profile.jpg"}
                                                         alt="Avatar"
-                                                        style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover", marginRight: "10px" }}
+                                                        style={{
+                                                            width: "60px",
+                                                            height: "60px",
+                                                            borderRadius: "50%",
+                                                            objectFit: "cover",
+                                                            marginRight: "10px"
+                                                        }}
                                                     />
 
                                                     <div className="employee-text">
