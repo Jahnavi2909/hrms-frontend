@@ -1,6 +1,6 @@
 import { Card, Col, ProgressBar, Row, Tab, Tabs } from "react-bootstrap";
 import { FaCalendarAlt, FaCamera, FaClock, FaEnvelope, FaIdCard, FaMapMarkerAlt, FaPhone, FaUser, FaUserTag, FaUserTie } from "react-icons/fa";
-import { API_BASE_URL, attendanceApi, employeeApi } from "../../services/api";
+import { attendanceApi, employeeApi } from "../../services/api";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -127,15 +127,13 @@ const EmployeeProfile = () => {
             {employee.avatar ? (
               <div className="d-flex align-items-center gap-2">
                 <img
-                  src={
-                    employee.avatar
-                      ? `${API_BASE_URL}${employee.avatar}`
-                      : "/profile.jpg"
-                  }
-                  alt="Avatar"
-                  style={{width:"100%", height:"100%"}}
-                  onError={(e) => {
-                    e.currentTarget.src = "/profile.jpg";
+                  src={employee.avatar || "/profile.jpg"}
+                  alt="Profile"
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    borderRadius: "50%",
+                    objectFit: "cover"
                   }}
                 />
                 {employee.avatar && (
