@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Card, Container, Table, Form, Collapse } from "react-bootstrap";
 import { FaEdit, FaTrash, FaUserPlus } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
-import { API_BASE_URL, employeeApi } from "../../services/api";
+import {employeeApi } from "../../services/api";
 import EmployeeForm from "./EmployeeForm"; // import form component
 import "./style.css";
 import { useNavigate, useParams } from "react-router-dom";
