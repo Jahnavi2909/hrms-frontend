@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const API_BASE_URL = "https://d3qs09ype2r7pk.cloudfront.net" //my cloudfront url
+export const API_BASE_URL = "https://d2pa9ppytv9caa.cloudfront.net" //my cloudfront url
 
 const api = axios.create({
   baseURL: API_BASE_URL,
